@@ -1,0 +1,15 @@
+FROM opensuse:harlequin
+MAINTAINER tedgin@cyverse.org
+
+RUN zypper --non-interactive install \
+      gcc-c++ libcurl-devel make ncurses-utils rpm-build \
+      ftp://ftp.renci.org/pub/irods/releases/4.1.10/opensuse13/irods-dev-4.1.10-opensuse13-x86_64.rpm \
+      ftp://ftp.renci.org/pub/irods/releases/4.1.10/opensuse13/irods-runtime-4.1.10-opensuse13-x86_64.rpm && \
+    mkdir /rpmbuild /src && \
+    chmod a+w /rpmbuild
+
+VOLUME /src
+
+WORKDIR /src
+
+CMD bash
