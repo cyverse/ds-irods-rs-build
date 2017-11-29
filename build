@@ -85,7 +85,7 @@ main()
   check_env CYVERSE_DS_RES_SERVER
   check_env CYVERSE_DS_ZONE_KEY
 
-  local user="${CYVERSE_DS_CLERVER_USER:-rods}"
+  local user="${CYVERSE_DS_CLERVER_USER:-ipc_admin}"
   local hostDir="${CYVERSE_DS_RES_VAULT:-\$HOME/vault}"
   local containerDir=/irods_vault/"$CYVERSE_DS_RES_NAME"
 
