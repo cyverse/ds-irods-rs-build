@@ -73,6 +73,7 @@ main()
   if [ "$#" -lt 1 ]
   then
     printf 'An image tag is required.\n' >&2
+    show_help >&2
     return 1
   fi
 
@@ -107,6 +108,7 @@ check_env()
   if [ -z "${!var}" ]
   then
     printf 'The environment variable %s is not set.\n' "$var" >&2
+    show_help >&2
     return 1
   fi
 }
