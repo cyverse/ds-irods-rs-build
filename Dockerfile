@@ -29,15 +29,13 @@ RUN mkdir --parents /root/.gnupg && \
         /tmp/irods-microservice-plugin-netcdf-1.0-centos7.rpm && \
     yum --assumeyes clean all && \
     rm --force --recursive /tmp/* /root/.gnupg /usr/local/bin/gosu.asc /var/cache/yum && \
-    mkdir --parents /auth /var/lib/irods/.irods  /var/lib/irods/templates
+    mkdir --parents /auth /var/lib/irods/.irods
 
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
     /var/lib/irods/iRODS/server/bin/cmd/generateuuid.sh
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices/
 COPY etc/* /etc/irods/
-COPY run-time-templates/service_account.tmpl /var/lib/irods/templates/
-COPY run-time-templates/instantiate.sh /var/lib/irods/templates/instantiate
 COPY scripts/rs-init.sh /usr/local/bin/rs-init
 COPY scripts/rs-restart.sh /usr/local/bin/rs-restart
 COPY scripts/rs-start.sh /usr/local/bin/rs-start
@@ -47,7 +45,7 @@ COPY entrypoint.sh /entrypoint
 
 RUN chown --recursive irods:irods /auth /etc/irods /var/lib/irods && \
     chmod g+w /auth /var/lib/irods/iRODS/server/log && \
-    chmod a+x /var/lib/irods/templates/instantiate /usr/local/bin/* && \
+    chmod a+x /usr/local/bin/rs-* && \
     chmod u+x /entrypoint
 
 VOLUME /auth /var/lib/irods/iRODS/server/log
@@ -75,5 +73,4 @@ RUN mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
     chown irods:irods "$DEFAULT_RESOURCE_DIR" && \
     chmod g+w "$DEFAULT_RESOURCE_DIR" && \
     /tmp/instantiate && \
-    rm --force /tmp/* && \
-    chown irods:irods /etc/irods/server_config.json /var/lib/irods/templates/*
+    rm --force /tmp/*

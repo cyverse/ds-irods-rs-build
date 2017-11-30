@@ -50,8 +50,6 @@ main()
     local user=irods
   fi
 
-  gosu irods /var/lib/irods/templates/instantiate "$user"
-
   # TODO sort out signal handling
   gosu "$user" "$cmd"
 }
