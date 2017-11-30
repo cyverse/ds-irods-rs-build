@@ -170,6 +170,7 @@ mk_start_script()
 
 docker run --interactive --rm --tty \\
            --env LOCAL_USER_ID="\$(id --user)" \\
+           --hostname rs \\
            --name rs \\
            --publish 1247:1247/tcp \\
            --publish 1248:1248/tcp \\

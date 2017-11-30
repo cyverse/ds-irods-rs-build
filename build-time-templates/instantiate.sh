@@ -11,11 +11,8 @@ main()
 {
   local baseDir=$(dirname $(readlink -f "$0"))
 
-  expand_template "$baseDir"/hosts_config.tmpl > /var/lib/irods/templates/hosts_config.tmpl
-
-  expand_template "$baseDir"/irods_environment.tmpl \
-    > /var/lib/irods/templates/irods_environment.tmpl
-
+  expand_template "$baseDir"/hosts_config.tmpl > /etc/irods/hosts_config.json
+  expand_template "$baseDir"/irods_environment.tmpl > /var/lib/irods/.irods/irods_environment.json
   expand_template "$baseDir"/server_config.tmpl > /etc/irods/server_config.json
 }
 

@@ -23,12 +23,6 @@ main()
 
   sed "s/_SERVICE_ACCOUNT_NAME_/$servAcnt/" /var/lib/irods/templates/service_account.tmpl \
     > /etc/irods/service_account.config
-
-  jq ".irods_host |= \"$HOSTNAME\"" \
-    < /var/lib/irods/templates/irods_environment.tmpl > /var/lib/irods/.irods/irods_environment.json
-
-  jq ".host_entries[0].addresses[1].address |= \"$HOSTNAME\"" \
-    < /var/lib/irods/templates/hosts_config.tmpl > /etc/irods/hosts_config.json
 }
 
 
