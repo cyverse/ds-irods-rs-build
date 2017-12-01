@@ -3,20 +3,24 @@ MAINTAINER tedgin@cyverse.org
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && \
-    apt-get install --assume-yes apt-utils 2>/dev/null && \
+RUN apt-get --assume-yes update && \
+    apt-get --assume-yes --no-install-recommends install apt-utils 2>/dev/null && \
     dpkg-reconfigure apt-utils && \
-    apt-get install --assume-yes build-essential libcurl4-gnutls-dev libssl-dev wget && \
+    apt-get --assume-yes --no-install-recommends install \
+      build-essential libcurl4-gnutls-dev libssl-dev wget && \
     wget --quiet \
       ftp://ftp.renci.org/pub/irods/releases/4.1.10/ubuntu12/irods-dev-4.1.10-ubuntu12-x86_64.deb \
       ftp://ftp.renci.org/pub/irods/releases/4.1.10/ubuntu12/irods-runtime-4.1.10-ubuntu12-x86_64.deb && \
-    dpkg --install /irods-dev-4.1.10-ubuntu12-x86_64.deb \
-                   /irods-runtime-4.1.10-ubuntu12-x86_64.deb && \
-    apt-get --fix-broken install && \
-    mkdir /src
+    dpkg --install \
+      /irods-dev-4.1.10-ubuntu12-x86_64.deb /irods-runtime-4.1.10-ubuntu12-x86_64.deb && \
+    apt-get --assume-yes --fix-broken --no-install-recommends install && \
+    mkdir /src && \
+    rm --force --recursive \
+      /irods-dev-4.1.10-ubuntu12-x86_64.deb /irods-runtime-4.1.10-ubuntu12-x86_64.deb \
+      /var/lib/apt/lists/*
 
 VOLUME /src
 
 WORKDIR /src
 
-CMD bash
+CMD [ "bash" ]
