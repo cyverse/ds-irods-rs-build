@@ -1,6 +1,7 @@
 NetCDF iCommands distro package instructions
 
-Requires irods-icommands-4.1.10 to be installed. These instructions will assume this package is already installed.
+Requires irods-icommands-4.1.10 to be installed. These instructions will assume 
+this package is already installed.
 
 Requires irods-runtime-4.1.10 to be installed (downloads page)
 
@@ -15,12 +16,6 @@ CentOS 7
     sudo yum install irods-runtime-4.1.10-centos7-x86_64.rpm \
                      irods-api-plugin-netcdf-1.0-centos7.rpm \
                      irods-icommands-netcdf-1.0-centos7.rpm
-
-OpenSUSE 13
-
-    sudo zypper install irods-runtime-4.1.10-opensuse13-x86_64.rpm \
-                        irods-api-plugin-netcdf-1.0-suse.rpm \
-                        irods-icommands-netcdf-1.0-suse.rpm
 
 Ubuntu 12
 Requires libcurl4-gnutls-dev to be installed as well

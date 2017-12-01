@@ -1,15 +1,18 @@
 FROM centos:6
 MAINTAINER tedgin@cyverse.org
 
-RUN yum --assumeyes install \
+RUN rpm --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6 && \
+    yum --assumeyes install \
       gcc-c++ libcurl-devel rpm-build \
       ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos6/irods-dev-4.1.10-centos6-x86_64.rpm \
       ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos6/irods-runtime-4.1.10-centos6-x86_64.rpm && \
     mkdir /rpmbuild /src && \
-    chmod a+w /rpmbuild
+    chmod a+w /rpmbuild && \
+    yum --assumeyes clean all && \
+    rm --force --recursive /var/cache/yum
 
 VOLUME /src
 
 WORKDIR /src
 
-CMD bash
+CMD [ "bash" ]

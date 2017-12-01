@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# Usage:
+#  build [OS...]
+#
+# Parameters:
+#  OS  an operating system to build the packages for: centos-6 centos-7 
+#      ubuntu-12, ubuntu-14  
+#
+# Builds the iRODS NetCDF plugin packages. It writes them into an OS specific 
+# subdirectory of packages/.
+#
+
+readonly AllOSes=(centos-6 centos-7 ubuntu-12 ubuntu-14)
+
+
+main()
+{
+  local oses=("$@")
+
+  if [ ${#oses} -eq 0 ]
+  then
+    oses=(${AllOSes[*]})
+  else
+    for candidateOS in ${oses[*]}
+    do
+      local verified=false
+
+      for os in ${AllOSes[*]}
+      do
+        if [ "$candidateOS" = "$os" ]
+        then
+          verified=true
+          break
+        fi
+      done
+        
+      if [ "$verified" = false ]
+      then
+        printf 'The OS %s is unsupported\n' "$candidateOS" >&2
+        return 1
+      fi
+    done
+  fi
+
+  build_selected ${oses[*]}
+}
+
+
+build_selected()
+{
+  local oses=("$@") 
+
+  local baseDir=$(dirname $(readlink --canonicalize "$0"))
+
+  for os in ${oses[*]}
+  do
+    local image=irods-plugin-build:4.1.10-"$os"
+
+    docker build --file "$baseDir"/dockerfiles/Dockerfile."$os" --tag "$image" "$baseDir"
+
+    local src="$baseDir"/scratch/"$os"
+
+    cp --recursive --update "$baseDir"/irods_netcdf "$src"
+
+    docker run --interactive --rm \
+               --name=netcdf-builder \
+               --user=$(id -u):$(id -g) \
+               --volume="$src":/src \
+               --volume="$baseDir"/packages:/packages \
+               --volume="$baseDir"/scripts/build-packages.sh:/build-packages \
+               "$image" /build-packages "$os"
+  done
+
+  # There are some bugs in the NetCDF build logic
+
+  if [ -e "$baseDir"/packages/centos-7 ]
+  then        
+    for f in $(ls "$baseDir"/packages/centos-7/*centos6*.rpm 2> /dev/null)
+    do
+      mv "$f" "${f/centos6/centos7}"
+    done
+  fi
+
+  if [ -e "$baseDir"/packages/ubuntu-12 ]
+  then
+    for f in $(ls "$baseDir"/packages/ubuntu-12/*0.deb 2> /dev/null)
+    do
+      mv "$f" "${f/.deb/-ubuntu12.deb}"
+    done
+  fi
+
+  if [ -e "$baseDir"/packages/ubuntu-14 ]
+  then
+    for f in $(ls "$baseDir"/packages/ubuntu-14/*0.deb 2> /dev/null)
+    do
+      mv "$f" "${f/.deb/-ubuntu14.deb}"
+    done
+  fi
+}
+
+
+set -e
+
+main "$@"
