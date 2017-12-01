@@ -131,7 +131,8 @@ mk_image()
   local baseDir=$(dirname $(readlink --canonicalize "$0"))
   local defaultResName="$CYVERSE_DS_RES_NAME"Res
 
-  (cd "$baseDir"/irods-netcdf-build && ./build.sh)
+  "$baseDir"/irods-netcdf-build/build centos-7
+
   (cd "$baseDir"/irods-setavu-plugin && ./build.sh)
 
   docker build --build-arg CLERVER_USER_NAME="$user" \
