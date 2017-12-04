@@ -132,8 +132,7 @@ mk_image()
   local defaultResName="$CYVERSE_DS_RES_NAME"Res
 
   "$baseDir"/irods-netcdf-build/build centos-7
-
-  (cd "$baseDir"/irods-setavu-plugin && ./build.sh)
+  "$baseDir"/irods-setavu-plugin/build centos7
 
   docker build --build-arg CLERVER_USER_NAME="$user" \
                --build-arg CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \
