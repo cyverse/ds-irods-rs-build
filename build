@@ -104,8 +104,8 @@ main()
   mk_auth_script "$tag" > "$scriptDir"/auth-clerver
   chmod +x "$scriptDir"/auth-clerver
 
-  mk_start_script "$tag" "$hostDir" "$containerDir" > "$scriptDir"/start-irods
-  chmod +x "$scriptDir"/start-irods
+  mk_svc_script "$tag" "$hostDir" "$containerDir" > "$scriptDir"/irods-svc
+  chmod +x "$scriptDir"/irods-svc
 }
 
 
@@ -200,7 +200,7 @@ mk_image()
 #  containerVault  the base directory within the container where the files will
 #                  be stored
 #
-mk_start_script()
+mk_svc_script()
 {
   local tag="$1"
   local hostVault="$2"
@@ -209,22 +209,42 @@ mk_start_script()
   cat <<EOF
 #! /bin/bash
 #
-# This script starts a container holding an iRODS resource server configured to
-# serve the $CYVERSE_DS_RES_NAME storage resource for the CyVerse Data Store.
+# Usage:
+#  irods-svc (start|stop)
+#
+# This script starts or stops a container holding an iRODS resource server
+# configured to serve the $CYVERSE_DS_RES_NAME storage resource for the CyVerse
+# Data Store.
 #
 
-docker run --detach --rm --tty \\
-           --env LOCAL_USER_ID="\$(id --user)" \\
-           --hostname rs \\
-           --name rs \\
-           --publish 1247:1247/tcp \\
-           --publish 1248:1248/tcp \\
-           --publish 20000-20009:20000-20009/tcp \\
-           --publish 20000-20009:20000-20009/udp \\
-           --volume "\$HOME"/auth:/auth \\
-           --volume "\$HOME"/log:/var/lib/irods/iRODS/server/log \\
-           --volume "$hostVault":'$containerVault' \\
-           '$tag'
+if [ "\$#" -lt 1 ]
+then
+  printf 'One of the actions "start" or "stop" needs to be provided\n' >&2
+  exit 1
+fi
+
+action="\$1"
+
+if [ "\$action" = start ]
+then
+  docker run --detach --rm --tty \\
+             --env LOCAL_USER_ID="\$(id --user)" \\
+             --hostname rs \\
+             --name rs \\
+             --publish 1247:1247/tcp \\
+             --publish 1248:1248/tcp \\
+             --publish 20000-20009:20000-20009/tcp \\
+             --publish 20000-20009:20000-20009/udp \\
+             --volume "\$HOME"/auth:/auth \\
+             --volume "\$HOME"/log:/var/lib/irods/iRODS/server/log \\
+             --volume "$hostVault":'$containerVault' \\
+             '$tag'
+elif [ "\$action" = stop ]
+then
+  docker stop rs
+else
+  printf 'unknown action "%s"\n' "\$action" >&2
+fi
 EOF
 }
 

@@ -51,8 +51,6 @@ main()
   fi
 
   exec gosu "$user" "${cmdTerms[@]}"
-
-  # TODO convert to service
 }
 
 

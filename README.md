@@ -3,15 +3,22 @@
 An iRODS resource server that runs in a Docker container. The container is
 configured for the CyVerse Data Store.
 
+
 ## Generating the Docker Image
 
 The `build` program can be used to generate a Docker image containing an iRODS
 resource server that is configured to serve a given resource within the CyVerse
-Data Store. When `build` is executed, it writes a script to stardard output.
-This script can be used to start a container from the generated image.  
+Data Store. It also generates two scripts. The `auth-clever` script can be used
+to authenticate the clerver user with the IES.  The `irods-svc` script can be
+used to start and stop a container with the resource running in it. `irods-svc
+start` creates and starts a detached container named `rs` with the running
+resource server, and `irods-svc stop` stops and removes the `rs` container.
 
-As its only command line argument, `build` expects the tag that will be assigned
-to the generated imaged.
+As its first command line argument, `build` expects the tag that will be assigned
+to the generated imaged. It also accepts an optional second argument specifying
+the directory where the `auth-clever` and `irods-svc` scripts are to be written.
+If this isn't provided, the scripts will be written to the current working
+directory.
 
 The program expects several environment variables to be set when it is executed.
 
@@ -28,12 +35,15 @@ Environment Variable           | Required | Default       | Description
 Here's an example.
 
 ```
-CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key \
+prompt> CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key \
 CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key \
 CYVERSE_DS_RES_NAME=rs \
 CYVERSE_DS_RES_SERVER=rs.domain.net \
 CYVERSE_DS_ZONE_KEY=SECRET_zone_key \
-./build rs-tag > start-script
+./build rs-tag scriptDir
+
+prompt> ls scriptDir
+auth-clerver*  irods-svc*
 ```
 
 ## Prerequisites
