@@ -50,20 +50,9 @@ main()
     local user=irods
   fi
 
-  # Wait for IES to become available
-  until exec 3<> /dev/tcp/data.cyverse.org/1247
-  do
-    printf 'Waiting for IES\n'
-    sleep 1
-  done 2> /dev/null
+  exec gosu "$user" "${cmdTerms[@]}"
 
-  exec 3<&-
-  exec 3>&-
-
-  # TODO sort out signal handling
   # TODO remove unneeded rs- scripts
-  gosu "$user" "${cmdTerms[@]}"
-
   # TODO convert to service
 }
 

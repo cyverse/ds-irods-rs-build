@@ -213,7 +213,7 @@ mk_start_script()
 # serve the $CYVERSE_DS_RES_NAME storage resource for the CyVerse Data Store.
 #
 
-docker run --interactive --rm --tty \\
+docker run --detach --rm --tty \\
            --env LOCAL_USER_ID="\$(id --user)" \\
            --hostname rs \\
            --name rs \\
