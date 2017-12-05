@@ -1,7 +1,7 @@
 FROM centos:7
 MAINTAINER Tony Edgin <tedgin@cyverse.org>
 
-COPY irods-netcdf-build/packages/centos-7/* /tmp/
+COPY irods-netcdf-build/packages/centos7/* /tmp/
 
 RUN mkdir --parents /root/.gnupg && \
     touch /root/.gnupg/gpg.conf && \
