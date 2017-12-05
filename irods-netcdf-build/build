@@ -4,14 +4,14 @@
 #  build [OS...]
 #
 # Parameters:
-#  OS  an operating system to build the packages for: centos-6 centos-7 
-#      ubuntu-12, ubuntu-14  
+#  OS  an operating system to build the packages for: centos6, centos7,
+#      ubuntu12, and ubuntu14
 #
-# Builds the iRODS NetCDF plugin packages. It writes them into an OS specific 
+# Builds the iRODS NetCDF plugin packages. It writes them into an OS specific
 # subdirectory of packages/.
 #
 
-readonly AllOSes=(centos-6 centos-7 ubuntu-12 ubuntu-14)
+readonly AllOSes=(centos6 centos7 ubuntu12 ubuntu14)
 
 
 main()
@@ -34,7 +34,7 @@ main()
           break
         fi
       done
-        
+
       if [ "$verified" = false ]
       then
         printf 'The OS %s is unsupported\n' "$candidateOS" >&2
@@ -49,7 +49,7 @@ main()
 
 build_selected()
 {
-  local oses=("$@") 
+  local oses=("$@")
 
   local baseDir=$(dirname $(readlink --canonicalize "$0"))
 
@@ -57,12 +57,15 @@ build_selected()
   do
     local image=irods-plugin-build:4.1.10-"$os"
 
+    printf 'Building image %s\n' "$image"
     docker build --file "$baseDir"/dockerfiles/Dockerfile."$os" --tag "$image" "$baseDir"
 
     local src="$baseDir"/scratch/"$os"
 
+    printf 'Copying source changes for %s build\n' "$os"
     cp --recursive --update "$baseDir"/irods_netcdf "$src"
 
+    printf 'Building for %s\n' "$os"
     docker run --interactive --rm \
                --name=netcdf-builder \
                --user=$(id -u):$(id -g) \
@@ -74,25 +77,25 @@ build_selected()
 
   # There are some bugs in the NetCDF build logic
 
-  if [ -e "$baseDir"/packages/centos-7 ]
-  then        
-    for f in $(ls "$baseDir"/packages/centos-7/*centos6*.rpm 2> /dev/null)
+  if [ -e "$baseDir"/packages/centos7 ]
+  then
+    for f in $(ls "$baseDir"/packages/centos7/*centos6*.rpm 2> /dev/null)
     do
       mv "$f" "${f/centos6/centos7}"
     done
   fi
 
-  if [ -e "$baseDir"/packages/ubuntu-12 ]
+  if [ -e "$baseDir"/packages/ubuntu12 ]
   then
-    for f in $(ls "$baseDir"/packages/ubuntu-12/*0.deb 2> /dev/null)
+    for f in $(ls "$baseDir"/packages/ubuntu12/*0.deb 2> /dev/null)
     do
       mv "$f" "${f/.deb/-ubuntu12.deb}"
     done
   fi
 
-  if [ -e "$baseDir"/packages/ubuntu-14 ]
+  if [ -e "$baseDir"/packages/ubuntu14 ]
   then
-    for f in $(ls "$baseDir"/packages/ubuntu-14/*0.deb 2> /dev/null)
+    for f in $(ls "$baseDir"/packages/ubuntu14/*0.deb 2> /dev/null)
     do
       mv "$f" "${f/.deb/-ubuntu14.deb}"
     done
