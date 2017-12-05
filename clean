@@ -11,7 +11,7 @@ main()
 {
   local baseDir=$(dirname $(readlink --canonicalize "$0"))
 
-  rm --force --recursive "$baseDir"/scratch/* "$baseDir"/packages/*
+  rm --force --recursive "$baseDir"/packages "$baseDir"/scratch 
   docker images --quiet --filter reference=irods-plugin-build | xargs --no-run-if-empty docker rmi
 }
 
