@@ -35,7 +35,7 @@ main()
 
   if [ -n "$LOCAL_USER_ID" ]
   then
-    printf 'Starting with irods-override (UID:%s)\n' "$LOCAL_USER_ID"
+    printf 'Executing as irods-override (UID:%s)\n' "$LOCAL_USER_ID"
 
     local user=irods-override
 
@@ -47,7 +47,7 @@ main()
             --uid "$LOCAL_USER_ID" \
             "$user"
   else
-    printf 'Starting with irods\n'
+    printf 'Executing as irods\n'
 
     local user=irods
   fi

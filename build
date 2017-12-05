@@ -8,14 +8,17 @@ show_help()
 build
 
 Usage:
- build [options] <tag>
+ build [options] <tag> <script-dir>
 
 Builds a docker image containing a resource server configured for the CyVerse
-Data Store. It also generates a script for running the docker container and
-writes it to standard output.
+Data Store. It also generates two scripts. `auth-clerver` authenticates the
+clerver user with the IES, and `start-irods` starts the resource server inside
+the the docker container.
 
 Parameters:
- <tag>  the docker image tag
+ <tag>         the docker image tag
+ <script-dir>  the directory where the scripts will be written: defaults to
+               current working directory
 
 Options:
  -h, --help  show help and exit
@@ -79,6 +82,13 @@ main()
 
   local tag="$1"
 
+  if [ "$#" -ge 2 ]
+  then
+    local scriptDir="$2"
+  else
+    local scriptDir="$(pwd)"
+  fi
+
   check_env CYVERSE_DS_CONTROL_PLANE_KEY
   check_env CYVERSE_DS_NEGOTIATION_KEY
   check_env CYVERSE_DS_RES_NAME
@@ -90,7 +100,12 @@ main()
   local containerDir=/irods_vault/"$CYVERSE_DS_RES_NAME"
 
   mk_image "$tag" "$user" "$containerDir" >&2
-  mk_start_script "$tag" "$hostDir" "$containerDir"
+
+  mk_auth_script "$tag" > "$scriptDir"/auth-clerver
+  chmod +x "$scriptDir"/auth-clerver
+
+  mk_start_script "$tag" "$hostDir" "$containerDir" > "$scriptDir"/start-irods
+  chmod +x "$scriptDir"/start-irods
 }
 
 
@@ -111,6 +126,36 @@ check_env()
     show_help >&2
     return 1
   fi
+}
+
+
+#
+# Generate a script for authenticating the clerver user.
+#
+# Parameters:
+#  tag  the tag of the image to holding the logic.
+#
+mk_auth_script()
+{
+  local tag="$1"
+
+  cat <<EOF
+#! /bin/bash
+# Usage:
+#  auth-clerver [PASSWD]
+#
+# Parameter:
+#  PASSWD  the password used to authenticate the clerver account with the IES
+#
+# Initializes the clerver account so that this resource server can connect to
+# the IES. It uses PASSWD to authenticate the clerver account. If PASSWD isn't
+# provided, This script will ask for the password.
+#
+
+docker run --interactive --rm --tty \\
+           --env LOCAL_USER_ID="\$(id --user)" --name rs --volume "\$HOME"/auth:/auth \\
+           '$tag' /usr/local/bin/rs-init \$*
+EOF
 }
 
 
