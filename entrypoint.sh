@@ -26,13 +26,10 @@ main()
 {
   if [ "$#" -eq 0 ]
   then
-    # TODO default command should start resource server
-    local cmdTerms=(bash)
+    local cmdTerms=(rs-start)
   else
     local cmdTerms=("$@")
   fi
-
-  # TODO remove unneeded rs- scripts
 
   if [ -n "$LOCAL_USER_ID" ]
   then
@@ -64,6 +61,7 @@ main()
   exec 3>&-
 
   # TODO sort out signal handling
+  # TODO remove unneeded rs- scripts
   gosu "$user" "${cmdTerms[@]}"
 
   # TODO convert to service

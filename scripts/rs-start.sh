@@ -16,6 +16,7 @@ main()
   fi
 
   /var/lib/irods/iRODS/irodsctl start
+  bash
 }
 
 
