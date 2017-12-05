@@ -154,7 +154,7 @@ mk_auth_script()
 
 docker run --interactive --rm --tty \\
            --env LOCAL_USER_ID="\$(id --user)" --name rs --volume "\$HOME"/auth:/auth \\
-           '$tag' rs-init "\$*"
+           '$tag' auth-clerver "\$*"
 EOF
 }
 

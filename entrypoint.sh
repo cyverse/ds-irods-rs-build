@@ -26,7 +26,7 @@ main()
 {
   if [ "$#" -eq 0 ]
   then
-    local cmdTerms=(rs-start)
+    local cmdTerms=(irods-rs)
   else
     local cmdTerms=("$@")
   fi
@@ -52,7 +52,6 @@ main()
 
   exec gosu "$user" "${cmdTerms[@]}"
 
-  # TODO remove unneeded rs- scripts
   # TODO convert to service
 }
 

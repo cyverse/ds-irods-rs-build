@@ -36,16 +36,13 @@ ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateu
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices/
 COPY etc/* /etc/irods/
-COPY scripts/rs-init.sh /usr/local/bin/rs-init
-COPY scripts/rs-restart.sh /usr/local/bin/rs-restart
-COPY scripts/rs-start.sh /usr/local/bin/rs-start
-COPY scripts/rs-status.sh /usr/local/bin/rs-status
-COPY scripts/rs-stop.sh /usr/local/bin/rs-stop
+COPY scripts/auth-clerver.sh /usr/local/bin/auth-clerver
+COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
 COPY entrypoint.sh /entrypoint
 
 RUN chown --recursive irods:irods /auth /etc/irods /var/lib/irods && \
     chmod g+w /auth /var/lib/irods/iRODS/server/log && \
-    chmod a+x /usr/local/bin/rs-* && \
+    chmod a+x /usr/local/bin/auth-clerver /usr/local/bin/irods-rs && \
     chmod u+x /entrypoint
 
 VOLUME /auth /var/lib/irods/iRODS/server/log

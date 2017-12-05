@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # Usage:
-#  rs-init [PASSWD]
+#  auth-clerver [PASSWD]
 #
 # Parameter:
 #  PASSWD  the password used to authenticate the clerver account with the IES
