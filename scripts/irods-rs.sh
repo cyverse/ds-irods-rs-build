@@ -27,15 +27,18 @@ main()
   exec 3<&-
   exec 3>&-
 
-  trap stop SIGTERM
   /var/lib/irods/iRODS/irodsctl start
+  trap stop SIGTERM
   printf 'Ready\n'
 
-  while true
+  local irodsPid=
+
+  while irodsPid=$(pidof -s /var/lib/irods/iRODS/server/bin/irodsServer)
   do
-    tail --follow /dev/null &
+    tail --follow /dev/null --pid "$irodsPid" &
     tailPid="$!"
     wait "$tailPid"
+    tailPid=
   done
 }
 
@@ -43,17 +46,13 @@ main()
 stop()
 {
   /var/lib/irods/iRODS/irodsctl stop
-  local ret="$?"
 
   if [ -n "$tailPid" ]
   then
     kill "$tailPid"
     wait "$tailPid"
   fi
-
-  return "$ret"
 }
-
 
 set -e
 

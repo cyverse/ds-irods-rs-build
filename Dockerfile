@@ -18,7 +18,7 @@ RUN mkdir --parents /root/.gnupg && \
     yum --assumeyes install epel-release && \
     rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 && \
     yum --assumeyes install \
-      jq uuidd which \
+      jq sysvinit-tools uuidd which \
       ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-resource-4.1.10-centos7-x86_64.rpm \
       ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-runtime-4.1.10-centos7-x86_64.rpm && \
     adduser --system --comment 'iRODS Administrator' --home-dir /var/lib/irods --shell /bin/bash \
