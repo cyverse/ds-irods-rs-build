@@ -76,3 +76,12 @@ iadmin addchildtoresc "$coordRes" "$CYVERSE_DS_RES_NAME"
 
 Finally, the vault directory on the server hosting the container needs to
 exist and be writable by the user that will be running the container.
+
+
+## Repository Dependencies
+
+This repository has two subtrees. The master branch of the
+https://github.com/cyverse/irods-netcdf-build is attached to the directory
+`irods-netcdf-build`. The master branch of the
+https://github.com/iPlantCollaborativeOpenSource/irods-setavu-plugin is attached
+to the directory `irods-setavu-plugin`.
