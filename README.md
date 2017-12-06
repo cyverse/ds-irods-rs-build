@@ -43,7 +43,7 @@ CYVERSE_DS_ZONE_KEY=SECRET_zone_key \
 ./build rs-tag scriptDir
 
 prompt> ls scriptDir
-auth-clerver*  irods-svc*
+auth-clerver  irods-svc
 ```
 
 ## Prerequisites
