@@ -46,6 +46,13 @@ prompt> ls scriptDir
 auth-clerver  irods-svc
 ```
 
+## Volume Mounts
+
+The generated container uses two volumes.  `rs-logs` holds the resource server
+log files. `rs-auth` holds the scrambled password used by iRODS to persist
+authentication status of the clerver user.
+
+
 ## Prerequisites
 
 Before this a generated image can be used, there are a few things that need to

@@ -153,7 +153,9 @@ mk_auth_script()
 #
 
 docker run --interactive --rm --tty \\
-           --env LOCAL_USER_ID="\$(id --user)" --name rs --volume "\$HOME"/auth:/auth \\
+           --env LOCAL_USER_ID="\$(id --user)" \\
+           --mount type=volume,source=rs-auth,target=/auth \\
+           --name rs \\
            '$tag' auth-clerver "\$*"
 EOF
 }
@@ -230,14 +232,15 @@ then
   docker run --detach --rm --tty \\
              --env LOCAL_USER_ID="\$(id --user)" \\
              --hostname rs \\
+             --mount type=bind,source='$hostVault',target='$containerVault' \\
+             --mount type=tmpfs,destination=/var/lib/irods/iRODS/server/log/proc \\
+             --mount type=volume,source=rs-auth,target=/auth \\
+             --mount type=volume,source=rs-logs,target=/var/lib/irods/iRODS/server/log \\
              --name rs \\
              --publish 1247:1247/tcp \\
              --publish 1248:1248/tcp \\
              --publish 20000-20009:20000-20009/tcp \\
              --publish 20000-20009:20000-20009/udp \\
-             --volume "\$HOME"/auth:/auth \\
-             --volume "\$HOME"/log:/var/lib/irods/iRODS/server/log \\
-             --volume "$hostVault":'$containerVault' \\
              '$tag'
 elif [ "\$action" = stop ]
 then

@@ -45,7 +45,7 @@ RUN chown --recursive irods:irods /auth /etc/irods /var/lib/irods && \
     chmod a+x /usr/local/bin/auth-clerver /usr/local/bin/irods-rs && \
     chmod u+x /entrypoint
 
-VOLUME /auth /var/lib/irods/iRODS/server/log
+VOLUME /auth /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc
 
 EXPOSE 1247/tcp 1248/tcp 20000-20009/tcp 20000-20009/udp
 
