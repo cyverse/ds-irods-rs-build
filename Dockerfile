@@ -71,3 +71,5 @@ RUN mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
     chmod g+w "$DEFAULT_RESOURCE_DIR" && \
     /tmp/instantiate && \
     rm --force /tmp/*
+
+VOLUME "$DEFAULT_RESOURCE_DIR"
