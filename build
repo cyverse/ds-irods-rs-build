@@ -199,12 +199,9 @@ mk_build_cmd()
 
   cat <<EOF
 docker build --build-arg CLERVER_USER_NAME="$user" \
-             --build-arg CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \
              --build-arg DEFAULT_RESOURCE_DIR="$containerVault" \
              --build-arg DEFAULT_RESOURCE_NAME="$defaultResName" \
-             --build-arg NEGOTIATION_KEY="$CYVERSE_DS_NEGOTIATION_KEY" \
              --build-arg RS_CNAME="$CYVERSE_DS_RES_SERVER" \
-             --build-arg ZONE_KEY="$CYVERSE_DS_ZONE_KEY" \
              --tag "$tag" \
              $srcAccess
 EOF
@@ -281,7 +278,10 @@ action="\$1"
 if [ "\$action" = start ]
 then
   docker run --detach --rm --tty \\
+             --env CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \\
              --env LOCAL_USER_ID="\$(id --user)" \\
+             --env NEGOTIATION_KEY="$CYVERSE_DS_NEGOTIATION_KEY" \\
+             --env ZONE_KEY="$CYVERSE_DS_ZONE_KEY" \\
              --hostname rs \\
              --mount type=bind,source='$hostVault',target='$containerVault' \\
              --mount type=bind,source='$hostLog',target=/var/lib/irods/iRODS/server/log \\

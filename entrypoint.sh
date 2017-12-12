@@ -31,6 +31,14 @@ main()
     local cmdTerms=("$@")
   fi
 
+  expand_template /run-time-templates/server_config.tmpl > /etc/irods/server_config.json
+
+  expand_template /run-time-templates/irods_environment.tmpl \
+    > /var/lib/irods/.irods/irods_environment.json
+
+  chown irods:irods /etc/irods/server_config.json /var/lib/irods/.irods/irods_environment.json
+
+
   if [ -n "$LOCAL_USER_ID" ]
   then
     printf 'Executing as irods-override (UID:%s)\n' "$LOCAL_USER_ID"
@@ -51,6 +59,29 @@ main()
   fi
 
   exec gosu "$user" "${cmdTerms[@]}"
+}
+
+
+escape_for_sed()
+{
+  local var="$*"
+
+  # Escape \ first to avoid escaping the escape character, i.e. avoid / -> \/ -> \\/
+  var="${var//\\/\\\\}"
+
+  printf '%s' "${var//\//\\/}"
+}
+
+
+expand_template()
+{
+  local tmplFile="$1"
+
+  cat <<EOF | sed --file - "$tmplFile"
+s/_CONTROL_PLANE_KEY_/$(escape_for_sed "$CONTROL_PLANE_KEY")/g
+s/_NEGOTIATION_KEY_/$(escape_for_sed "$NEGOTIATION_KEY")/g
+s/_ZONE_KEY_/$(escape_for_sed "$ZONE_KEY")/g
+EOF
 }
 
 

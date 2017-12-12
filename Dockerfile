@@ -32,8 +32,9 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
         /tmp/irods-icommands-netcdf-1.0-centos7.rpm \
         /tmp/irods-microservice-plugin-netcdf-1.0-centos7.rpm && \
     yum --assumeyes clean all && \
-    rm --force --recursive /tmp/* /var/cache/yum && \
-    mkdir --parents /auth /var/lib/irods/.irods
+    rm --force --recursive /etc/irods/hosts_config.json /etc/irods_server_config.json /tmp/* \
+                           /var/cache/yum && \
+    mkdir --parents /auth /run-time-templates /var/lib/irods/.irods
 
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
     /var/lib/irods/iRODS/server/bin/cmd
@@ -46,7 +47,7 @@ COPY entrypoint.sh /entrypoint
 COPY build-time-templates/instantiate.sh /tmp/instantiate
 COPY build-time-templates/*.tmpl /tmp/
 
-RUN chown --recursive irods:irods /auth /etc/irods /var/lib/irods && \
+RUN chown --recursive irods:irods /auth /etc/irods /run-time-templates /var/lib/irods && \
     chmod g+w /auth /var/lib/irods/iRODS/server/log && \
     chmod a+x /usr/local/bin/auth-clerver /usr/local/bin/irods-rs && \
     chmod u+x /entrypoint /tmp/instantiate
@@ -57,20 +58,22 @@ EXPOSE 1247/tcp 1248/tcp 20000-20009/tcp 20000-20009/udp
 
 WORKDIR /var/lib/irods
 
+ENV CONTROL_PLANE_KEY=
+ENV LOCAL_USER_ID=
+ENV NEGOTIATION_KEY=
+ENV ZONE_KEY=
+
 ENTRYPOINT [ "/entrypoint" ]
 
 ONBUILD ARG CLERVER_USER_NAME=rods
-ONBUILD ARG CONTROL_PLANE_KEY=TEMPORARY__32byte_ctrl_plane_key
 ONBUILD ARG DEFAULT_RESOURCE_DIR=/var/lib/irods/Vault
 ONBUILD ARG DEFAULT_RESOURCE_NAME=demoResc
-ONBUILD ARG NEGOTIATION_KEY=TEMPORARY_32byte_negotiation_key
-ONBUILD ARG RS_CNAME=localhost
-ONBUILD ARG ZONE_KEY=TEMPORARY_zone_key
+ONBUILD ARG RS_CNAME
 
-ONBUILD RUN mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
-            chown irods:irods "$DEFAULT_RESOURCE_DIR" && \
+ONBUILD RUN /tmp/instantiate && \
+            mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
             chmod g+w "$DEFAULT_RESOURCE_DIR" && \
-            /tmp/instantiate && \
+            chown irods:irods /run-time-templates/* "$DEFAULT_RESOURCE_DIR" && \
             rm --force /tmp/*
 
 ONBUILD VOLUME "$DEFAULT_RESOURCE_DIR"
