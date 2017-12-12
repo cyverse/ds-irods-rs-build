@@ -26,6 +26,7 @@ Environment Variable           | Required | Default       | Description
 ------------------------------ | -------- | ------------- | -----------
 `CYVERSE_DS_CLERVER_USER`      | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
 `CYVERSE_DS_CONTROL_PLANE_KEY` | yes      |               | the encryption key required for communicating over the relevant iRODS grid control plane
+`CYVERSE_DS_LOG_DIR`           | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
 `CYVERSE_DS_NEGOTIATION_KEY`   | yes      |               | the encryption key shared by the iplant zone for advanced negotiation during client connections
 `CYVERSE_DS_RES_NAME`          | yes      |               | the name of the storage resource that will be served
 `CYVERSE_DS_RES_SERVER`        | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
@@ -46,11 +47,10 @@ prompt> ls scriptDir
 auth-clerver  irods-svc
 ```
 
-## Volume Mounts
 
-The generated container uses two volumes.  `rs-logs` holds the resource server
-log files. `rs-auth` holds the scrambled password used by iRODS to persist
-authentication status of the clerver user.
+## Volume Mount
+
+The generated container uses one volume, `rs-auth`. It holds the scrambled password used by iRODS to persist authentication status of the clerver user.
 
 
 ## Prerequisites
