@@ -1,20 +1,25 @@
-FROM centos:7
+FROM centos:7 AS gosu-builder
 MAINTAINER Tony Edgin <tedgin@cyverse.org>
 
+ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 \
+    https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc \
+    /
+
+RUN mkdir --parents /root/.gnupg
+RUN touch /root/.gnupg/gpg.conf
+RUN gpg --quiet \
+        --keyserver hkp://ha.pool.sks-keyservers.net:80 \
+        --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+RUN gpg --quiet --verify /gosu-amd64.asc
+RUN chmod +x /gosu-amd64
+
+
+FROM centos:7
+
+COPY --from=gosu-builder /gosu-amd64 /usr/local/bin/gosu
 COPY irods-netcdf-build/packages/centos7/* /tmp/
 
-RUN mkdir --parents /root/.gnupg && \
-    touch /root/.gnupg/gpg.conf && \
-    gpg --quiet \
-        --keyserver hkp://ha.pool.sks-keyservers.net:80 \
-        --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
-    curl --location --show-error --silent --output /usr/local/bin/gosu \
-         https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 && \
-    curl --location --show-error --silent --output /usr/local/bin/gosu.asc \
-         https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc && \
-    gpg --quiet --verify /usr/local/bin/gosu.asc && \
-    chmod +x /usr/local/bin/gosu && \
-    rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
+RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     yum --assumeyes install epel-release && \
     rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 && \
     yum --assumeyes install \
@@ -28,7 +33,7 @@ RUN mkdir --parents /root/.gnupg && \
         /tmp/irods-icommands-netcdf-1.0-centos7.rpm \
         /tmp/irods-microservice-plugin-netcdf-1.0-centos7.rpm && \
     yum --assumeyes clean all && \
-    rm --force --recursive /tmp/* /root/.gnupg /usr/local/bin/gosu.asc /var/cache/yum && \
+    rm --force --recursive /tmp/* /var/cache/yum && \
     mkdir --parents /auth /var/lib/irods/.irods
 
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
