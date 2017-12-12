@@ -1,22 +1,21 @@
 FROM centos:7 AS gosu-builder
 MAINTAINER Tony Edgin <tedgin@cyverse.org>
 
-ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 \
-    https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc \
-    /
+ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 /gosu
+ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc /gosu.asc
 
 RUN mkdir --parents /root/.gnupg
 RUN touch /root/.gnupg/gpg.conf
 RUN gpg --quiet \
         --keyserver hkp://ha.pool.sks-keyservers.net:80 \
         --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN gpg --quiet --verify /gosu-amd64.asc
-RUN chmod +x /gosu-amd64
+RUN gpg --quiet --verify /gosu.asc
+RUN chmod +x /gosu
 
 
 FROM centos:7
 
-COPY --from=gosu-builder /gosu-amd64 /usr/local/bin/gosu
+COPY --from=gosu-builder /gosu /usr/local/bin
 COPY irods-netcdf-build/packages/centos7/* /tmp/
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
@@ -37,18 +36,20 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     mkdir --parents /auth /var/lib/irods/.irods
 
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
-    /var/lib/irods/iRODS/server/bin/cmd/generateuuid.sh
+    /var/lib/irods/iRODS/server/bin/cmd
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices/
 COPY etc/* /etc/irods/
 COPY scripts/auth-clerver.sh /usr/local/bin/auth-clerver
 COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
 COPY entrypoint.sh /entrypoint
+COPY build-time-templates/instantiate.sh /tmp/instantiate
+COPY build-time-templates/*.tmpl /tmp/
 
 RUN chown --recursive irods:irods /auth /etc/irods /var/lib/irods && \
     chmod g+w /auth /var/lib/irods/iRODS/server/log && \
     chmod a+x /usr/local/bin/auth-clerver /usr/local/bin/irods-rs && \
-    chmod u+x /entrypoint
+    chmod u+x /entrypoint /tmp/instantiate
 
 VOLUME /auth /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc
 
@@ -58,23 +59,18 @@ WORKDIR /var/lib/irods
 
 ENTRYPOINT [ "/entrypoint" ]
 
-ARG CLERVER_USER_NAME=rods
-ARG CONTROL_PLANE_KEY=TEMPORARY__32byte_ctrl_plane_key
-ARG DEFAULT_RESOURCE_DIR=/var/lib/irods/Vault
-ARG DEFAULT_RESOURCE_NAME=demoResc
-ARG NEGOTIATION_KEY=TEMPORARY_32byte_negotiation_key
-ARG RS_CNAME=localhost
-ARG ZONE_KEY=TEMPORARY_zone_key
+ONBUILD ARG CLERVER_USER_NAME=rods
+ONBUILD ARG CONTROL_PLANE_KEY=TEMPORARY__32byte_ctrl_plane_key
+ONBUILD ARG DEFAULT_RESOURCE_DIR=/var/lib/irods/Vault
+ONBUILD ARG DEFAULT_RESOURCE_NAME=demoResc
+ONBUILD ARG NEGOTIATION_KEY=TEMPORARY_32byte_negotiation_key
+ONBUILD ARG RS_CNAME=localhost
+ONBUILD ARG ZONE_KEY=TEMPORARY_zone_key
 
-COPY build-time-templates/instantiate.sh /tmp/instantiate
-COPY build-time-templates/*.tmpl /tmp/
+ONBUILD RUN mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
+            chown irods:irods "$DEFAULT_RESOURCE_DIR" && \
+            chmod g+w "$DEFAULT_RESOURCE_DIR" && \
+            /tmp/instantiate && \
+            rm --force /tmp/*
 
-RUN chmod u+x /tmp/instantiate
-
-RUN mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
-    chown irods:irods "$DEFAULT_RESOURCE_DIR" && \
-    chmod g+w "$DEFAULT_RESOURCE_DIR" && \
-    /tmp/instantiate && \
-    rm --force /tmp/*
-
-VOLUME "$DEFAULT_RESOURCE_DIR"
+ONBUILD VOLUME "$DEFAULT_RESOURCE_DIR"

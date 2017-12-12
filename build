@@ -11,7 +11,10 @@ Usage:
  build [options] <tag> <script-dir>
 
 Builds a docker image containing a resource server configured for the CyVerse
-Data Store. It also generates two scripts. `auth-clerver` authenticates the
+Data Store. It assumes the Dockerfile is named 'Dockerfile' and is in the
+CONTEXT directory. If there is no Dockerfile, it will use a default one.
+
+It also generates two scripts. `auth-clerver` authenticates the
 clerver user with the IES, and `start-irods` starts the resource server inside
 the the docker container.
 
@@ -21,6 +24,9 @@ Parameters:
                current working directory
 
 Options:
+ -c, --context CONTEXT  The docker build context: default current working
+                        directory
+
  -h, --help  show help and exit
 
 Environment Variables:
@@ -47,7 +53,7 @@ EOF
 
 main()
 {
-  if ! opts=$(getopt --name build --options h --longoptions help -- "$@")
+  if ! opts=$(getopt --name build --options c:h --longoptions context:,help -- "$@")
   then
     show_help >&2
     return 1
@@ -58,6 +64,10 @@ main()
   while true
   do
     case "$1" in
+      -c|--context)
+        context="$2"
+        shift 2
+        ;;
       -h|--help)
         show_help
         return 0
@@ -89,6 +99,11 @@ main()
     local scriptDir="$(pwd)"
   fi
 
+  if [ -z "$context" ]
+  then
+    context=.
+  fi
+
   check_env CYVERSE_DS_CONTROL_PLANE_KEY
   check_env CYVERSE_DS_NEGOTIATION_KEY
   check_env CYVERSE_DS_RES_NAME
@@ -100,7 +115,7 @@ main()
   local hostLog="${CYVERSE_DS_LOG_DIR:-\$HOME/log}"
   local user="${CYVERSE_DS_CLERVER_USER:-ipc_admin}"
 
-  mk_image "$tag" "$user" "$containerVault" >&2
+  mk_image "$context" "$tag" "$user" "$containerVault" >&2
 
   mk_auth_script "$tag" > "$scriptDir"/auth-clerver
   chmod +x "$scriptDir"/auth-clerver
@@ -163,34 +178,66 @@ EOF
 
 
 #
+# Generates the image build command
+#
+# Parameters:
+#  tag             the tag of the image that the command will build
+#  user            the clerver user
+#  containerVault  the base directory with the container where the files will be
+#                  stored
+#  defaultResName  the default resource name
+#  srcAccess       the docker build args for setting the context or build
+#                  commands access
+#
+mk_build_cmd()
+{
+  local tag="$1"
+  local user="$2"
+  local containerVault="$3"
+  local defaultResName="$4"
+  local srcAccess="$5"
+
+  cat <<EOF
+docker build --build-arg CLERVER_USER_NAME="$user" \
+             --build-arg CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \
+             --build-arg DEFAULT_RESOURCE_DIR="$containerVault" \
+             --build-arg DEFAULT_RESOURCE_NAME="$defaultResName" \
+             --build-arg NEGOTIATION_KEY="$CYVERSE_DS_NEGOTIATION_KEY" \
+             --build-arg RS_CNAME="$CYVERSE_DS_RES_SERVER" \
+             --build-arg ZONE_KEY="$CYVERSE_DS_ZONE_KEY" \
+             --tag "$tag" \
+             $srcAccess
+EOF
+}
+
+
+#
 # Build the image.
 #
 # Parameters:
+#  context         the build context
 #  tag             the tag to assign to the built image
 #  user            the clerver user
 #  containerVault  the base directory within the container where the files will
 #                  be stored
 mk_image()
 {
-  local tag="$1"
-  local user="$2"
-  local containerVault="$3"
+  local context="$1"
+  local tag="$2"
+  local user="$3"
+  local containerVault="$4"
 
-  local baseDir=$(dirname $(readlink --canonicalize "$0"))
   local defaultResName="$CYVERSE_DS_RES_NAME"Res
+  local srcAccess=
 
-  "$baseDir"/irods-netcdf-build/build centos7
-  "$baseDir"/irods-setavu-plugin/build centos7
+  if [ -e "$context"/Dockerfile ]
+  then
+    srcAccess="'$context'"
+  else
+    srcAccess="- <<< 'FROM ds-res-base-onbuild'"
+  fi
 
-  docker build --build-arg CLERVER_USER_NAME="$user" \
-               --build-arg CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \
-               --build-arg DEFAULT_RESOURCE_DIR="$containerVault" \
-               --build-arg DEFAULT_RESOURCE_NAME="$defaultResName" \
-               --build-arg NEGOTIATION_KEY="$CYVERSE_DS_NEGOTIATION_KEY" \
-               --build-arg RS_CNAME="$CYVERSE_DS_RES_SERVER" \
-               --build-arg ZONE_KEY="$CYVERSE_DS_ZONE_KEY" \
-               --tag "$tag" \
-               "$baseDir"
+  eval $(mk_build_cmd "$tag" "$user" "$containerVault" "$defaultResName" "$srcAccess")
 }
 
 
