@@ -11,12 +11,6 @@ tailPid=
 
 main()
 {
-  if [ ! -e /auth/irodsA ]
-  then
-    printf 'Please run `auth-clerver` first to authenticate the clerver user with the IES.\n' >&2
-    return 1
-  fi
-
   # Wait for IES to become available
   until exec 3<> /dev/tcp/data.cyverse.org/1247
   do
@@ -26,6 +20,8 @@ main()
 
   exec 3<&-
   exec 3>&-
+
+  IRODS_HOST=data.cyverse.org iinit "$CLERVER_USER_PASSWORD"
 
   /var/lib/irods/iRODS/irodsctl start
   trap stop SIGTERM

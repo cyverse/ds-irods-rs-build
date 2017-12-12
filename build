@@ -104,6 +104,7 @@ main()
     context=.
   fi
 
+  check_env CYVERSE_DS_CLERVER_PASSWORD
   check_env CYVERSE_DS_CONTROL_PLANE_KEY
   check_env CYVERSE_DS_NEGOTIATION_KEY
   check_env CYVERSE_DS_RES_NAME
@@ -116,9 +117,6 @@ main()
   local user="${CYVERSE_DS_CLERVER_USER:-ipc_admin}"
 
   mk_image "$context" "$tag" "$user" "$containerVault" >&2
-
-  mk_auth_script "$tag" > "$scriptDir"/auth-clerver
-  chmod +x "$scriptDir"/auth-clerver
 
   mk_svc_script "$tag" "$hostLog" "$hostVault" "$containerVault" > "$scriptDir"/irods-svc
   chmod +x "$scriptDir"/irods-svc
@@ -142,38 +140,6 @@ check_env()
     show_help >&2
     return 1
   fi
-}
-
-
-#
-# Generate a script for authenticating the clerver user.
-#
-# Parameters:
-#  tag  the tag of the image to holding the logic.
-#
-mk_auth_script()
-{
-  local tag="$1"
-
-  cat <<EOF
-#! /bin/bash
-# Usage:
-#  auth-clerver [PASSWD]
-#
-# Parameter:
-#  PASSWD  the password used to authenticate the clerver account with the IES
-#
-# Initializes the clerver account so that this resource server can connect to
-# the IES. It uses PASSWD to authenticate the clerver account. If PASSWD isn't
-# provided, This script will ask for the password.
-#
-
-docker run --interactive --rm --tty \\
-           --env LOCAL_USER_ID="\$(id --user)" \\
-           --mount type=volume,source=rs-auth,target=/auth \\
-           --name rs \\
-           '$tag' auth-clerver "\$*"
-EOF
 }
 
 
@@ -278,6 +244,7 @@ action="\$1"
 if [ "\$action" = start ]
 then
   docker run --detach --rm --tty \\
+             --env CLERVER_USER_PASSWORD="$CYVERSE_DS_CLERVER_PASSWORD" \\
              --env CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \\
              --env LOCAL_USER_ID="\$(id --user)" \\
              --env NEGOTIATION_KEY="$CYVERSE_DS_NEGOTIATION_KEY" \\
@@ -286,7 +253,6 @@ then
              --mount type=bind,source='$hostVault',target='$containerVault' \\
              --mount type=bind,source='$hostLog',target=/var/lib/irods/iRODS/server/log \\
              --mount type=tmpfs,destination=/var/lib/irods/iRODS/server/log/proc \\
-             --mount type=volume,source=rs-auth,target=/auth \\
              --name rs \\
              --publish 1247:1247/tcp \\
              --publish 1248:1248/tcp \\

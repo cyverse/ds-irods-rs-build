@@ -8,22 +8,21 @@ configured for the CyVerse Data Store.
 
 The `build` program can be used to generate a Docker image containing an iRODS
 resource server that is configured to serve a given resource within the CyVerse
-Data Store. It also generates two scripts. The `auth-clever` script can be used
-to authenticate the clerver user with the IES.  The `irods-svc` script can be
-used to start and stop a container with the resource running in it. `irods-svc
-start` creates and starts a detached container named `rs` with the running
-resource server, and `irods-svc stop` stops and removes the `rs` container.
+Data Store. It also generates the `irods-svc` script. This script can be used to
+start and stop a container with the resource running in it. `irods-svc start`
+creates and starts a detached container named `rs` with the resource server
+running, and `irods-svc stop` stops and removes the `rs` container.
 
 As its first command line argument, `build` expects the tag that will be assigned
 to the generated imaged. It also accepts an optional second argument specifying
-the directory where the `auth-clever` and `irods-svc` scripts are to be written.
-If this isn't provided, the scripts will be written to the current working
-directory.
+the directory where the  `irods-svc` script is to be written. If this isn't
+provided, the scripts will be written to the current working directory.
 
 The program expects several environment variables to be set when it is executed.
 
 Environment Variable           | Required | Default       | Description
 ------------------------------ | -------- | ------------- | -----------
+`CYVERSE_DS_CLERVER_PASSWORD`  | yes      |               | the password used to authenticate `CYVERSE_DS_CLERVER_USER`
 `CYVERSE_DS_CLERVER_USER`      | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
 `CYVERSE_DS_CONTROL_PLANE_KEY` | yes      |               | the encryption key required for communicating over the relevant iRODS grid control plane
 `CYVERSE_DS_LOG_DIR`           | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
@@ -36,7 +35,8 @@ Environment Variable           | Required | Default       | Description
 Here's an example.
 
 ```
-prompt> CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key \
+prompt> CYVERSE_DS_CLERVER_PASSWORD=SECRET_PASSWORD \
+CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key \
 CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key \
 CYVERSE_DS_RES_NAME=rs \
 CYVERSE_DS_RES_SERVER=rs.domain.net \
@@ -44,13 +44,8 @@ CYVERSE_DS_ZONE_KEY=SECRET_zone_key \
 ./build rs-tag scriptDir
 
 prompt> ls scriptDir
-auth-clerver  irods-svc
+irods-svc
 ```
-
-
-## Volume Mount
-
-The generated container uses one volume, `rs-auth`. It holds the scrambled password used by iRODS to persist authentication status of the clerver user.
 
 
 ## Prerequisites

@@ -34,25 +34,24 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     yum --assumeyes clean all && \
     rm --force --recursive /etc/irods/hosts_config.json /etc/irods_server_config.json /tmp/* \
                            /var/cache/yum && \
-    mkdir --parents /auth /run-time-templates /var/lib/irods/.irods
+    mkdir --parents /run-time-templates /var/lib/irods/.irods
 
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
     /var/lib/irods/iRODS/server/bin/cmd
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices/
 COPY etc/* /etc/irods/
-COPY scripts/auth-clerver.sh /usr/local/bin/auth-clerver
 COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
 COPY entrypoint.sh /entrypoint
 COPY build-time-templates/instantiate.sh /tmp/instantiate
 COPY build-time-templates/*.tmpl /tmp/
 
-RUN chown --recursive irods:irods /auth /etc/irods /run-time-templates /var/lib/irods && \
-    chmod g+w /auth /var/lib/irods/iRODS/server/log && \
-    chmod a+x /usr/local/bin/auth-clerver /usr/local/bin/irods-rs && \
+RUN chown --recursive irods:irods /etc/irods /run-time-templates /var/lib/irods && \
+    chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
+    chmod a+x /usr/local/bin/irods-rs && \
     chmod u+x /entrypoint /tmp/instantiate
 
-VOLUME /auth /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc
+VOLUME /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc
 
 EXPOSE 1247/tcp 1248/tcp 20000-20009/tcp 20000-20009/udp
 
