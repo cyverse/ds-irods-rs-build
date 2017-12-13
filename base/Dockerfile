@@ -42,8 +42,8 @@ COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugin
 COPY etc/* /etc/irods/
 COPY irods_environment.json /var/lib/irods/.irods
 COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
-COPY entrypoint.sh /entrypoint
-COPY on-build-instantiate.sh /on-build-instantiate
+COPY scripts/entrypoint.sh /entrypoint
+COPY scripts/on-build-instantiate.sh /on-build-instantiate
 
 RUN chown --recursive irods:irods /etc/irods /var/lib/irods && \
     chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
