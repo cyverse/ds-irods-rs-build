@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # Usage:
-#  build-base
+#  build
 #
 # This program builds the ds-res-base-onbuild image that forms the base image
 # for CyVerse Data Store resource server images.
@@ -12,8 +12,8 @@ readonly BaseDir=$(dirname $(readlink --canonicalize "$0"))
 
 main()
 {
-  "$BaseDir"/base/irods-netcdf-build/build centos7
-  "$BaseDir"/base/irods-setavu-plugin/build centos7
+  "$BaseDir"/irods-netcdf-build/build centos7
+  "$BaseDir"/irods-setavu-plugin/build centos7
   docker build --tag ds-res-base-onbuild "$BaseDir"
 }
 

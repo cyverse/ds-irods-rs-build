@@ -16,7 +16,7 @@ RUN chmod +x /gosu
 FROM centos:7
 
 COPY --from=gosu-builder /gosu /usr/local/bin
-COPY base/irods-netcdf-build/packages/centos7/* /tmp/
+COPY irods-netcdf-build/packages/centos7/* /tmp/
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     yum --assumeyes install epel-release && \
@@ -38,12 +38,12 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
     /var/lib/irods/iRODS/server/bin/cmd
 
-COPY base/irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices
-COPY base/etc/* /etc/irods/
-COPY base/irods_environment.json /var/lib/irods/.irods
-COPY base/scripts/irods-rs.sh /usr/local/bin/irods-rs
-COPY base/entrypoint.sh /entrypoint
-COPY base/on-build-instantiate.sh /on-build-instantiate
+COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices
+COPY etc/* /etc/irods/
+COPY irods_environment.json /var/lib/irods/.irods
+COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
+COPY entrypoint.sh /entrypoint
+COPY on-build-instantiate.sh /on-build-instantiate
 
 RUN chown --recursive irods:irods /etc/irods /var/lib/irods && \
     chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \

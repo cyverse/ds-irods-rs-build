@@ -84,6 +84,6 @@ exist and be writable by the user that will be running the container.
 
 This repository has two subtrees. The master branch of the
 https://github.com/cyverse/irods-netcdf-build is attached to the directory
-`irods-netcdf-build`. The master branch of the
+`base/irods-netcdf-build`. The master branch of the
 https://github.com/iPlantCollaborativeOpenSource/irods-setavu-plugin is attached
-to the directory `irods-setavu-plugin`.
+to the directory `base/irods-setavu-plugin`.
