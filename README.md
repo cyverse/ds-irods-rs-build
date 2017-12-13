@@ -18,8 +18,8 @@ be assigned to the generated imaged. It also accepts an optional second argument
 specifying the directory where the  `irods-svc` script is to be written. If this
 isn't provided, the scripts will be written to the current working directory.
 
-The `build-cyverse-rs` expects several environment variables to be set when it is
-executed.
+The `build-cyverse-rs` expects several environment variables to be defined in an
+environment file when it is executed.
 
 Environment Variable           | Required | Default       | Description
 ------------------------------ | -------- | ------------- | -----------
@@ -36,13 +36,22 @@ Environment Variable           | Required | Default       | Description
 Here's an example.
 
 ```
-prompt> CYVERSE_DS_CLERVER_PASSWORD=SECRET_PASSWORD \
-CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key \
-CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key \
-CYVERSE_DS_RES_NAME=rs \
-CYVERSE_DS_RES_SERVER=rs.domain.net \
-CYVERSE_DS_ZONE_KEY=SECRET_zone_key \
-./build-cyverse-rs rs-tag scriptDir
+prompt> cat rs.env
+###
+# *** DO NOT SHARE THIS FILE ***
+#
+# THIS FILE CONTAINS SECRET INFORMATION THAT COULD BE USED TO GAIN PRIVILEGED
+# ACCESS TO THE CYVERSE DATA STORE. PLEASE KEEP THIS FILE IN A SECURE PLACE.
+#
+###
+CYVERSE_DS_RES_NAME=rs
+CYVERSE_DS_RES_SERVER=rs.domain.net
+CYVERSE_DS_CLERVER_PASSWORD=SECRET_PASSWORD
+CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
+CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
+CYVERSE_DS_ZONE_KEY=SECRET_zone_key
+
+prompt> build-cyverse-rs rs-tag rs.env scriptDir
 
 prompt> ls scriptDir
 irods-svc
