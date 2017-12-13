@@ -26,6 +26,8 @@ main()
      .irods_home             |= \"/iplant/home/$CLERVER_USER_NAME\" |
      .irods_user_name        |= \"$CLERVER_USER_NAME\"" \
     /var/lib/irods/.irods/irods_environment.json
+
+  printf "\nipc_DEFAULT_RESC = '%s'\n" "$DEFAULT_RESOURCE_NAME" >> /etc/irods/ipc-env.re
 }
 
 
