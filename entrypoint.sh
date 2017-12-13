@@ -31,13 +31,15 @@ main()
     local cmdTerms=("$@")
   fi
 
-  expand_template /run-time-templates/server_config.tmpl > /etc/irods/server_config.json
+  jq_in_place \
+    ".irods_server_control_plane_key |= \"$CONTROL_PLANE_KEY\"" \
+    /var/lib/irods/.irods/irods_environment.json
 
-  expand_template /run-time-templates/irods_environment.tmpl \
-    > /var/lib/irods/.irods/irods_environment.json
-
-  chown irods:irods /etc/irods/server_config.json /var/lib/irods/.irods/irods_environment.json
-
+  jq_in_place \
+    ".negotiation_key          |= \"$NEGOTIATION_KEY\" |
+     .server_control_plane_key |= \"$CONTROL_PLANE_KEY\" |
+     .zone_key                 |= \"$ZONE_KEY\"" \
+    /etc/irods/server_config.json
 
   if [ -n "$LOCAL_USER_ID" ]
   then
@@ -62,26 +64,12 @@ main()
 }
 
 
-escape_for_sed()
+jq_in_place()
 {
-  local var="$*"
+  local filter="$1"
+  local file="$2"
 
-  # Escape \ first to avoid escaping the escape character, i.e. avoid / -> \/ -> \\/
-  var="${var//\\/\\\\}"
-
-  printf '%s' "${var//\//\\/}"
-}
-
-
-expand_template()
-{
-  local tmplFile="$1"
-
-  cat <<EOF | sed --file - "$tmplFile"
-s/_CONTROL_PLANE_KEY_/$(escape_for_sed "$CONTROL_PLANE_KEY")/g
-s/_NEGOTIATION_KEY_/$(escape_for_sed "$NEGOTIATION_KEY")/g
-s/_ZONE_KEY_/$(escape_for_sed "$ZONE_KEY")/g
-EOF
+  jq "$filter" "$file" | awk 'BEGIN { RS=""; getline<"-"; print>ARGV[1] }' "$file"
 }
 
 

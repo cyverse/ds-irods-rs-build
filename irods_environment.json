@@ -12,7 +12,6 @@
   "irods_port": 1247,
   "irods_server_control_plane_encryption_algorithm": "AES-256-CBC",
   "irods_server_control_plane_encryption_num_hash_rounds": 16,
-  "irods_server_control_plane_key": "_CONTROL_PLANE_KEY_",
   "irods_server_control_plane_port": 1248,
   "irods_zone_name": "iplant"
 }

@@ -32,24 +32,23 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
         /tmp/irods-icommands-netcdf-1.0-centos7.rpm \
         /tmp/irods-microservice-plugin-netcdf-1.0-centos7.rpm && \
     yum --assumeyes clean all && \
-    rm --force --recursive /etc/irods/hosts_config.json /etc/irods_server_config.json /tmp/* \
-                           /var/cache/yum && \
-    mkdir --parents /run-time-templates /var/lib/irods/.irods
+    rm --force --recursive /tmp/* /var/cache/yum && \
+    mkdir --parents /var/lib/irods/.irods
 
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
     /var/lib/irods/iRODS/server/bin/cmd
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices/
 COPY etc/* /etc/irods/
+COPY irods_environment.json /var/lib/irods/.irods
 COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
 COPY entrypoint.sh /entrypoint
-COPY build-time-templates/instantiate.sh /tmp/instantiate
-COPY build-time-templates/*.tmpl /run-time-templates/
+COPY on-build-instantiate.sh /on-build-instantiate
 
-RUN chown --recursive irods:irods /etc/irods /run-time-templates /var/lib/irods && \
+RUN chown --recursive irods:irods /etc/irods /var/lib/irods && \
     chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
     chmod a+x /usr/local/bin/irods-rs && \
-    chmod u+x /entrypoint /tmp/instantiate
+    chmod u+x /entrypoint /on-build-instantiate
 
 VOLUME /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc
 
@@ -69,10 +68,10 @@ ONBUILD ARG DEFAULT_RESOURCE_DIR=/var/lib/irods/Vault
 ONBUILD ARG DEFAULT_RESOURCE_NAME=demoResc
 ONBUILD ARG RS_CNAME
 
-ONBUILD RUN /tmp/instantiate && \
+ONBUILD RUN /on-build-instantiate && \
             mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
             chmod g+w "$DEFAULT_RESOURCE_DIR" && \
-            chown irods:irods /run-time-templates/* "$DEFAULT_RESOURCE_DIR" && \
-            rm --force /tmp/*
+            chown irods:irods "$DEFAULT_RESOURCE_DIR" && \
+            rm --force /on-build-instantiate
 
 ONBUILD VOLUME "$DEFAULT_RESOURCE_DIR"

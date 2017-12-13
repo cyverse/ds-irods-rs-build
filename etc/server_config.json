@@ -15,7 +15,6 @@
   "federation": [],
   "icat_host": "data.cyverse.org",
   "match_hash_policy": "compatible",
-  "negotiation_key": "_NEGOTIATION_KEY_",
   "re_data_variable_mapping_set": [
     { "filename": "core" }
   ],
@@ -29,14 +28,12 @@
   "schema_validation_base_uri": "https://schemas.irods.org/configuration",
   "server_control_plane_encryption_algorithm": "AES-256-CBC",
   "server_control_plane_encryption_num_hash_rounds": 16,
-  "server_control_plane_key": "_CONTROL_PLANE_KEY_",
   "server_control_plane_port": 1248,
   "server_control_plane_timeout_milliseconds": 10000,
   "server_port_range_end": 20009,
   "server_port_range_start": 20000,
   "xmsg_port": 1249,
   "zone_auth_scheme": "native",
-  "zone_key": "_ZONE_KEY_",
   "zone_name": "iplant",
   "zone_port": 1247
 }
