@@ -46,8 +46,8 @@ COPY scripts/start-irods.sh /start-irods
 COPY scripts/entrypoint.sh /entrypoint
 COPY scripts/on-build-instantiate.sh /on-build-instantiate
 
-RUN chown --recursive irods:irods /etc/irods /start-irods /var/lib/irods && \
-    chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
+RUN chown --recursive irods:irods /start-irods /var/lib/irods && \
+    chmod ug+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
     chmod ug+x /start-irods && \
     chmod u+x /entrypoint /on-build-instantiate
 
@@ -71,8 +71,9 @@ ONBUILD ARG RS_CNAME
 
 ONBUILD RUN /on-build-instantiate && \
             mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
+            chown --recursive \
+                  irods:irods "$DEFAULT_RESOURCE_DIR" /etc/irods /var/lib/irods/.irods && \
             chmod g+w "$DEFAULT_RESOURCE_DIR" && \
-            chown irods:irods "$DEFAULT_RESOURCE_DIR" && \
             rm --force /on-build-instantiate
 
 ONBUILD VOLUME "$DEFAULT_RESOURCE_DIR"
