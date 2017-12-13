@@ -5,18 +5,19 @@ show_help()
 {
   cat <<'EOF'
 
-build
+build-cyverse-rs
 
 Usage:
- build [options] <tag> <script-dir>
+ build-cyverse-rs [options] <tag> <script-dir>
 
 Builds a docker image containing a resource server configured for the CyVerse
 Data Store. It assumes the Dockerfile is named 'Dockerfile' and is in the
 CONTEXT directory. If there is no Dockerfile, it will use a default one.
 
-It also generates two scripts. `auth-clerver` authenticates the
-clerver user with the IES, and `start-irods` starts the resource server inside
-the the docker container.
+It also generates the script 'irods-svc'. This script can be used to start and
+stop a container with the resource running in it. 'irods-svc start' creates and
+starts a detached container named 'rs' with the resource server running, and
+'irods-svc stop' stops and removes the 'rs' container.
 
 Parameters:
  <tag>         the docker image tag
@@ -30,6 +31,8 @@ Options:
  -h, --help  show help and exit
 
 Environment Variables:
+ CYVERSE_DS_CLERVER_PASSWORD   the password used to authenticate the clerver
+                               rodsadmin user
  CYVERSE_DS_CLERVER_USER       (optional) the name of the rodsadmin user
                                representing the resource server within the
                                zone: default 'ipc_admin'

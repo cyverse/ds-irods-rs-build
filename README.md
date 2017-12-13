@@ -6,19 +6,20 @@ configured for the CyVerse Data Store.
 
 ## Generating the Docker Image
 
-The `build` program can be used to generate a Docker image containing an iRODS
-resource server that is configured to serve a given resource within the CyVerse
-Data Store. It also generates the `irods-svc` script. This script can be used to
-start and stop a container with the resource running in it. `irods-svc start`
-creates and starts a detached container named `rs` with the resource server
-running, and `irods-svc stop` stops and removes the `rs` container.
+The `build-cyverse-rs` program can be used to generate a Docker image containing
+an iRODS resource server that is configured to serve a given resource within the
+CyVerse Data Store. It also generates the `irods-svc` script. This script can be
+used to start and stop a container with the resource running in it. `irods-svc
+start` creates and starts a detached container named `rs` with the resource
+server running, and `irods-svc stop` stops and removes the `rs` container.
 
-As its first command line argument, `build` expects the tag that will be assigned
-to the generated imaged. It also accepts an optional second argument specifying
-the directory where the  `irods-svc` script is to be written. If this isn't
-provided, the scripts will be written to the current working directory.
+As its first command line argument, `build-cyverse-rs` expects the tag that will
+be assigned to the generated imaged. It also accepts an optional second argument
+specifying the directory where the  `irods-svc` script is to be written. If this
+isn't provided, the scripts will be written to the current working directory.
 
-The program expects several environment variables to be set when it is executed.
+The `build-cyverse-rs` expects several environment variables to be set when it is
+executed.
 
 Environment Variable           | Required | Default       | Description
 ------------------------------ | -------- | ------------- | -----------
@@ -41,7 +42,7 @@ CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key \
 CYVERSE_DS_RES_NAME=rs \
 CYVERSE_DS_RES_SERVER=rs.domain.net \
 CYVERSE_DS_ZONE_KEY=SECRET_zone_key \
-./build rs-tag scriptDir
+./build-cyverse-rs rs-tag scriptDir
 
 prompt> ls scriptDir
 irods-svc
