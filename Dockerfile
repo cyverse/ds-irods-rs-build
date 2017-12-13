@@ -44,7 +44,7 @@ COPY etc/* /etc/irods/
 COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
 COPY entrypoint.sh /entrypoint
 COPY build-time-templates/instantiate.sh /tmp/instantiate
-COPY build-time-templates/*.tmpl /tmp/
+COPY build-time-templates/*.tmpl /run-time-templates/
 
 RUN chown --recursive irods:irods /etc/irods /run-time-templates /var/lib/irods && \
     chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
