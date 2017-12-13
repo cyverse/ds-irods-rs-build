@@ -10,8 +10,10 @@ The `build-cyverse-rs` program can be used to generate a Docker image containing
 an iRODS resource server that is configured to serve a given resource within the
 CyVerse Data Store. It also generates the `irods-svc` script. This script can be
 used to start and stop a container with the resource running in it. `irods-svc
-start` creates and starts a detached container named `rs` with the resource
-server running, and `irods-svc stop` stops and removes the `rs` container.
+start <env-file>` creates and starts a detached container named `rs` with the
+resource server running where `<env-file>` is the name of a file holding
+required environment variables. `irods-svc stop` stops and removes the `rs`
+container.
 
 As its first command line argument, `build-cyverse-rs` expects the tag that will
 be assigned to the generated imaged. It also accepts an optional second argument
@@ -21,22 +23,41 @@ isn't provided, the scripts will be written to the current working directory.
 The `build-cyverse-rs` expects several environment variables to be defined in an
 environment file when it is executed.
 
-Environment Variable           | Required | Default       | Description
------------------------------- | -------- | ------------- | -----------
-`CYVERSE_DS_CLERVER_PASSWORD`  | yes      |               | the password used to authenticate `CYVERSE_DS_CLERVER_USER`
-`CYVERSE_DS_CLERVER_USER`      | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
-`CYVERSE_DS_CONTROL_PLANE_KEY` | yes      |               | the encryption key required for communicating over the relevant iRODS grid control plane
-`CYVERSE_DS_LOG_DIR`           | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
-`CYVERSE_DS_NEGOTIATION_KEY`   | yes      |               | the encryption key shared by the iplant zone for advanced negotiation during client connections
-`CYVERSE_DS_RES_NAME`          | yes      |               | the name of the storage resource that will be served
-`CYVERSE_DS_RES_SERVER`        | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
-`CYVERSE_DS_RES_VAULT`         | no       | `$HOME`/vault | the host directory where the container will mount the vault, for the default, `$HOME` is evaluated at container start time
-`CYVERSE_DS_ZONE_KEY`          | yes      |               | the shared secret used during server-to-server communication
+Environment Variable      | Required | Default       | Description
+------------------------- | -------- | ------------- | -----------
+`CYVERSE_DS_CLERVER_USER` | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
+`CYVERSE_DS_LOG_DIR`      | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
+`CYVERSE_DS_RES_NAME`     | yes      |               | the name of the storage resource that will be served
+`CYVERSE_DS_RES_SERVER`   | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
+`CYVERSE_DS_RES_VAULT`    | no       | `$HOME`/vault | the host directory where the container will mount the vault, for the default, `$HOME` is evaluated at container start time
 
 Here's an example.
 
 ```
-prompt> cat rs.env
+prompt> cat build.env
+CYVERSE_DS_RES_NAME=rs
+CYVERSE_DS_RES_SERVER=rs.domain.net
+
+prompt> build-cyverse-rs rs-tag build.env scriptDir
+
+prompt> ls scriptDir
+irods-svc
+```
+
+When starting iRODS, the `irods-svc` script requires the following environment
+variables defined.
+
+Environment Variable           | Description
+------------------------------ | -----------
+`CYVERSE_DS_CLERVER_PASSWORD`  | the password used to authenticate `CYVERSE_DS_CLERVER_USER`
+`CYVERSE_DS_CONTROL_PLANE_KEY` | the encryption key required for communicating over the relevant iRODS grid control plane
+`CYVERSE_DS_NEGOTIATION_KEY`   | the encryption key shared by the iplant zone for advanced negotiation during client connections
+`CYVERSE_DS_ZONE_KEY`          | the shared secret used during server-to-server communication
+
+Here's an example.
+
+```
+prompt> cat run.env
 ###
 # *** DO NOT SHARE THIS FILE ***
 #
@@ -44,19 +65,13 @@ prompt> cat rs.env
 # ACCESS TO THE CYVERSE DATA STORE. PLEASE KEEP THIS FILE IN A SECURE PLACE.
 #
 ###
-CYVERSE_DS_RES_NAME=rs
-CYVERSE_DS_RES_SERVER=rs.domain.net
 CYVERSE_DS_CLERVER_PASSWORD=SECRET_PASSWORD
 CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
 CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
 CYVERSE_DS_ZONE_KEY=SECRET_zone_key
 
-prompt> build-cyverse-rs rs-tag rs.env scriptDir
-
-prompt> ls scriptDir
-irods-svc
+prompt> scriptDir/irods-svc start run.env
 ```
-
 
 ## Prerequisites
 

@@ -3,13 +3,15 @@
 # Usage:
 #  start-irods
 #
-# This script starts the iRODS resource server and waits for a SIGTERM.
+# This script starts the iRODS resource server and waits for a SIGTERM. It
+# expects the environment variable CYVERSE_DS_CLERVER_PASSWORD to hold clerver
+# user password.
 #
-
 
 tailPid=
 
 main()
+
 {
   # Wait for IES to become available
   until exec 3<> /dev/tcp/data.cyverse.org/1247
@@ -21,7 +23,7 @@ main()
   exec 3<&-
   exec 3>&-
 
-  IRODS_HOST=data.cyverse.org iinit "$CLERVER_USER_PASSWORD"
+  IRODS_HOST=data.cyverse.org iinit "$CYVERSE_DS_CLERVER_PASSWORD"
 
   /var/lib/irods/iRODS/irodsctl start
   trap stop SIGTERM

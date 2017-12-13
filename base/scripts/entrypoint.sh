@@ -20,6 +20,18 @@
 # appropriate user after the configuration has been updated. Otherwise, a bash
 # shell will be entered into.
 #
+# This script expects the following environment variables to be defined.
+#
+# CYVERSE_DS_CLERVER_PASSWORD   the password used to authenticate the clerver
+#                               user with the IES.
+# CYVERSE_DS_CONTROL_PLANE_KEY  the encryption key required for communicating
+#                               over the relevant iRODS grid control plane
+# CYVERSE_DS_NEGOTIATION_KEY    the encryption key shared by the iplant zone for
+#                               advanced negotiation during client connections
+# CYVERSE_DS_ZONE_KEY           the shared secret used during server-to-server
+#                               communication
+# LOCAL_USER_ID                 the UID on the hosting server to run iRODS as
+#
 
 
 main()
@@ -32,13 +44,13 @@ main()
   fi
 
   jq_in_place \
-    ".irods_server_control_plane_key |= \"$CONTROL_PLANE_KEY\"" \
+    ".irods_server_control_plane_key |= \"$CYVERSE_DS_CONTROL_PLANE_KEY\"" \
     /var/lib/irods/.irods/irods_environment.json
 
   jq_in_place \
-    ".negotiation_key          |= \"$NEGOTIATION_KEY\" |
-     .server_control_plane_key |= \"$CONTROL_PLANE_KEY\" |
-     .zone_key                 |= \"$ZONE_KEY\"" \
+    ".negotiation_key          |= \"$CYVERSE_DS_NEGOTIATION_KEY\" |
+     .server_control_plane_key |= \"$CYVERSE_DS_CONTROL_PLANE_KEY\" |
+     .zone_key                 |= \"$CYVERSE_DS_ZONE_KEY\"" \
     /etc/irods/server_config.json
 
   if [ -n "$LOCAL_USER_ID" ]

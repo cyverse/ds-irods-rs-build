@@ -32,25 +32,16 @@ Options:
  -h, --help  show help and exit
 
 Environment Variables:
- CYVERSE_DS_CLERVER_PASSWORD   the password used to authenticate the clerver
-                               rodsadmin user
- CYVERSE_DS_CLERVER_USER       (optional) the name of the rodsadmin user
-                               representing the resource server within the
-                               zone: default 'ipc_admin'
- CYVERSE_DS_CONTROL_PLANE_KEY  the encryption key required for communicating
-                               over the iRODS grid control plane.
- CYVERSE_DS_NEGOTIATION_KEY    the encryption key shared by the zone for
-                               advanced negotiation during client connections
- CYVERSE_DS_RES_NAME           the name of the storage resource that will be
-                               served
- CYVERSE_DS_RES_SERVER         the FQDN or address used by the IES and other
-                               resource servers to communicate with this one
- CYVERSE_DS_RES_VAULT          (optional) the host directory where the container
-                               will mount the vault: default '<home>/vault',
-                               where <home> is the home directory of the user
-                               starting the docker container
- CYVERSE_DS_ZONE_KEY           the shared secret used during server-to-server
-                               communication
+ CYVERSE_DS_CLERVER_USER  (optional) the name of the rodsadmin user representing
+                          the resource server within the zone: default
+                          'ipc_admin'
+ CYVERSE_DS_RES_NAME      the name of the storage resource that will be served
+ CYVERSE_DS_RES_SERVER    the FQDN or address used by the IES and other resource
+                          servers to communicate with this one
+ CYVERSE_DS_RES_VAULT     (optional) the host directory where the container will
+                          mount the vault: default '<home>/vault', where <home>
+                          is the home directory of the user starting the docker
+                          container
 EOF
 }
 
@@ -118,12 +109,8 @@ main()
   fi
 
   . "$envFile"
-  check_env CYVERSE_DS_CLERVER_PASSWORD
-  check_env CYVERSE_DS_CONTROL_PLANE_KEY
-  check_env CYVERSE_DS_NEGOTIATION_KEY
   check_env CYVERSE_DS_RES_NAME
   check_env CYVERSE_DS_RES_SERVER
-  check_env CYVERSE_DS_ZONE_KEY
 
   local containerVault=/irods_vault/"$CYVERSE_DS_RES_NAME"
   local hostVault="${CYVERSE_DS_RES_VAULT:-\$HOME/vault}"
@@ -240,7 +227,11 @@ mk_svc_script()
 #! /bin/bash
 #
 # Usage:
-#  irods-svc (start|stop)
+#  irods-svc (start <secrets-file> | stop)
+#
+# Parameters:
+#  <secrets-file>  The name of a file holding the secrets required for the
+#                  resource server to join the CyVerse grid.
 #
 # This script starts or stops a container holding an iRODS resource server
 # configured to serve the $CYVERSE_DS_RES_NAME storage resource for the CyVerse
@@ -257,22 +248,29 @@ action="\$1"
 
 if [ "\$action" = start ]
 then
-  docker run --detach --rm --tty \\
-             --env CLERVER_USER_PASSWORD="$CYVERSE_DS_CLERVER_PASSWORD" \\
-             --env CONTROL_PLANE_KEY="$CYVERSE_DS_CONTROL_PLANE_KEY" \\
-             --env LOCAL_USER_ID="\$(id --user)" \\
-             --env NEGOTIATION_KEY="$CYVERSE_DS_NEGOTIATION_KEY" \\
-             --env ZONE_KEY="$CYVERSE_DS_ZONE_KEY" \\
-             --hostname rs \\
-             --mount type=bind,source='$hostVault',target='$containerVault' \\
-             --mount type=bind,source='$hostLog',target=/var/lib/irods/iRODS/server/log \\
-             --mount type=tmpfs,destination=/var/lib/irods/iRODS/server/log/proc \\
-             --name rs \\
-             --publish 1247:1247/tcp \\
-             --publish 1248:1248/tcp \\
-             --publish 20000-20009:20000-20009/tcp \\
-             --publish 20000-20009:20000-20009/udp \\
-             '$tag'
+  if [ "\$#" -lt 2 ]
+  then
+    printf 'A secrets file is required\n' 2>&1
+    exit 1
+  fi
+
+  secrets="\$2"
+
+  docker run \\
+      --detach --rm --tty \\
+      --env LOCAL_USER_ID="\$(id --user)" \\
+      --env-file "\$secrets" \\
+      --hostname rs \\
+      --mount type=bind,source='$hostVault',target='$containerVault' \\
+      --mount type=bind,source='$hostLog',target=/var/lib/irods/iRODS/server/log \\
+      --mount type=tmpfs,destination=/var/lib/irods/iRODS/server/log/proc \\
+      --name rs \\
+      --publish 1247:1247/tcp \\
+      --publish 1248:1248/tcp \\
+      --publish 20000-20009:20000-20009/tcp \\
+      --publish 20000-20009:20000-20009/udp \\
+      '$tag' \\
+    > /dev/null
 elif [ "\$action" = stop ]
 then
   docker stop rs
