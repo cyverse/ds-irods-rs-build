@@ -42,13 +42,13 @@ COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugin
 COPY config/hosts_config.json config/server_config.json /etc/irods/
 COPY config/irods_environment.json /var/lib/irods/.irods
 COPY rules/* /etc/irods/
-COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
+COPY scripts/start-irods.sh /start-irods
 COPY scripts/entrypoint.sh /entrypoint
 COPY scripts/on-build-instantiate.sh /on-build-instantiate
 
-RUN chown --recursive irods:irods /etc/irods /var/lib/irods && \
+RUN chown --recursive irods:irods /etc/irods /start-irods /var/lib/irods && \
     chmod g+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
-    chmod a+x /usr/local/bin/irods-rs && \
+    chmod ug+x /start-irods && \
     chmod u+x /entrypoint /on-build-instantiate
 
 VOLUME /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc

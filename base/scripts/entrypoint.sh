@@ -26,7 +26,7 @@ main()
 {
   if [ "$#" -eq 0 ]
   then
-    local cmdTerms=(irods-rs)
+    local cmdTerms=(/start-irods)
   else
     local cmdTerms=("$@")
   fi

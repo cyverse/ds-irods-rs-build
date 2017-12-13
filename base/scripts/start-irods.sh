@@ -1,7 +1,7 @@
 #! /bin/bash
 #
 # Usage:
-#  irods-rs
+#  start-irods
 #
 # This script starts the iRODS resource server and waits for a SIGTERM.
 #
