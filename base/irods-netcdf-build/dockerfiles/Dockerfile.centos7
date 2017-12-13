@@ -1,0 +1,18 @@
+FROM centos:7
+MAINTAINER tedgin@cyverse.org
+
+RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
+    yum --assumeyes install \
+      gcc-c++ libcurl-devel make rpm-build \
+      ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-dev-4.1.10-centos7-x86_64.rpm \
+      ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-runtime-4.1.10-centos7-x86_64.rpm && \
+    mkdir /rpmbuild /src && \
+    chmod a+w /rpmbuild && \
+    yum --assumeyes clean all && \
+    rm --force --recursive /var/cache/yum
+
+VOLUME /src
+
+WORKDIR /src
+
+CMD [ "bash" ] 

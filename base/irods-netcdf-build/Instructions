@@ -1,0 +1,37 @@
+NetCDF iCommands distro package instructions
+
+Requires irods-icommands-4.1.10 to be installed. These instructions will assume 
+this package is already installed.
+
+Requires irods-runtime-4.1.10 to be installed (downloads page)
+
+CentOS 6
+
+    sudo yum install irods-runtime-4.1.10-centos6-x86_64.rpm \
+                     irods-api-plugin-netcdf-1.0-centos6.rpm \
+                     irods-icommands-netcdf-1.0-centos6.rpm
+
+CentOS 7
+
+    sudo yum install irods-runtime-4.1.10-centos7-x86_64.rpm \
+                     irods-api-plugin-netcdf-1.0-centos7.rpm \
+                     irods-icommands-netcdf-1.0-centos7.rpm
+
+Ubuntu 12
+Requires libcurl4-gnutls-dev to be installed as well
+
+    sudo apt-get install libcurl4-gnutls-dev
+    sudo dpkg -i irods-runtime-4.1.10-ubuntu12-x86_64.deb \
+                 irods-api-plugin-netcdf-1.0-ubuntu12.deb \
+                 irods-icommands-netcdf-1.0-ubuntu12.deb
+    sudo apt-get -f install
+
+Ubuntu 14
+Requires libcurl4-gnutls-dev to be installed as well
+
+    sudo apt-get install libcurl4-gnutls-dev
+    sudo dpkg -i irods-runtime-4.1.10-ubuntu14-x86_64.deb \
+                 irods-api-plugin-netcdf-1.0-ubuntu14.deb \
+                 irods-icommands-netcdf-1.0-ubuntu14.deb
+    sudo apt-get -f install
+    
