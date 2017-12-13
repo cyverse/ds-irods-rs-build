@@ -16,7 +16,7 @@ RUN chmod +x /gosu
 FROM centos:7
 
 COPY --from=gosu-builder /gosu /usr/local/bin
-COPY irods-netcdf-build/packages/centos7/* /tmp/
+COPY base/irods-netcdf-build/packages/centos7/* /tmp/
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     yum --assumeyes install epel-release && \

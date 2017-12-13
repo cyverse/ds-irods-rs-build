@@ -12,7 +12,7 @@ readonly BaseDir=$(dirname $(readlink --canonicalize "$0"))
 
 main()
 {
-  "$BaseDir"/irods-netcdf-build/build centos7
+  "$BaseDir"/base/irods-netcdf-build/build centos7
   "$BaseDir"/irods-setavu-plugin/build centos7
   docker build --tag ds-res-base-onbuild "$BaseDir"
 }
