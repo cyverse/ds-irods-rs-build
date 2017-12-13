@@ -38,7 +38,7 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
 ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
     /var/lib/irods/iRODS/server/bin/cmd
 
-COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices/
+COPY base/irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices
 COPY base/etc/* /etc/irods/
 COPY base/irods_environment.json /var/lib/irods/.irods
 COPY base/scripts/irods-rs.sh /usr/local/bin/irods-rs
