@@ -39,8 +39,9 @@ ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateu
     /var/lib/irods/iRODS/server/bin/cmd
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices
-COPY etc/* /etc/irods/
-COPY irods_environment.json /var/lib/irods/.irods
+COPY config/hosts_config.json config/server_config.json /etc/irods/
+COPY config/irods_environment.json /var/lib/irods/.irods
+COPY rules/* /etc/irods/
 COPY scripts/irods-rs.sh /usr/local/bin/irods-rs
 COPY scripts/entrypoint.sh /entrypoint
 COPY scripts/on-build-instantiate.sh /on-build-instantiate
