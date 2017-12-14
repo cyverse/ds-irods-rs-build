@@ -271,7 +271,7 @@ then
       --mount type=bind,source='$hostVault',target='$containerVault' \\
       --mount type=bind,source='$hostLog',target=/var/lib/irods/iRODS/server/log \\
       --mount type=tmpfs,destination=/var/lib/irods/iRODS/server/log/proc \\
-      --name rs \\
+      --name cyverse-rs \\
       --publish 1247:1247/tcp \\
       --publish 1248:1248/tcp \\
       --publish 20000-20009:20000-20009/tcp \\
@@ -281,8 +281,8 @@ then
     > /dev/null
 elif [ "\$action" = stop ]
 then
-  docker stop rs > /dev/null
-  docker rm rs > /dev/null
+  docker stop cyverse-rs > /dev/null
+  docker rm cyverse-rs > /dev/null
 else
   printf 'unknown action "%s"\n' "\$action" >&2
 fi

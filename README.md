@@ -10,10 +10,10 @@ The `build-cyverse-rs` program can be used to generate a Docker image containing
 an iRODS resource server that is configured to serve a given resource within the
 CyVerse Data Store. It also generates the `irods-svc` script. This script can be
 used to start and stop a container with the resource running in it. `irods-svc
-start <env-file>` creates and starts a detached container named `rs` with the
-resource server running where `<env-file>` is the name of a file holding
-required environment variables. `irods-svc stop` stops and removes the `rs`
-container.
+start <env-file>` creates and starts a detached container named `cyverse-rs`
+with the resource server running where `<env-file>` is the name of a file
+holding required environment variables. `irods-svc stop` stops and removes the
+`cyverse-rs` container.
 
 As its first command line argument, `build-cyverse-rs` expects the tag that will
 be assigned to the generated imaged. It also accepts an optional second argument
