@@ -257,7 +257,7 @@ then
   secrets="\$2"
 
   docker run \\
-      --detach --rm --tty \\
+      --detach --tty \\
       --env LOCAL_USER_ID="\$(id --user)" \\
       --env-file "\$secrets" \\
       --hostname rs \\
@@ -269,11 +269,13 @@ then
       --publish 1248:1248/tcp \\
       --publish 20000-20009:20000-20009/tcp \\
       --publish 20000-20009:20000-20009/udp \\
+      --restart on-failure \\
       '$tag' \\
     > /dev/null
 elif [ "\$action" = stop ]
 then
-  docker stop rs
+  docker stop rs > /dev/null
+  docker rm rs > /dev/null
 else
   printf 'unknown action "%s"\n' "\$action" >&2
 fi
