@@ -279,10 +279,18 @@ then
       --restart on-failure \\
       '$tag' \\
     > /dev/null
+
+    if [ "$?" -eq 0 ]
+    then
+      printf 'started iRODS resource server\n'
+    else
+      printf 'failed to start iRODS resource server\n'
+    fi
 elif [ "\$action" = stop ]
 then
   docker stop cyverse-rs > /dev/null
   docker rm cyverse-rs > /dev/null
+  printf 'stopped iRODS resource server\n'
 else
   printf 'unknown action "%s"\n' "\$action" >&2
 fi
