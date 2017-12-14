@@ -48,6 +48,9 @@ EOF
 
 main()
 {
+  local context=.
+  local scriptDir=.
+
   if ! opts=$(getopt --name build --options c:h --longoptions context:,help -- "$@")
   then
     show_help >&2
@@ -98,15 +101,19 @@ main()
 
   if [ "$#" -ge 3 ]
   then
-    local scriptDir="$3"
-  else
-    local scriptDir="$(pwd)"
+    scriptDir="$3"
   fi
 
-  if [ -z "$context" ]
-  then
-    context=.
-  fi
+  build "$tag" "$context" "$envFile" "$scriptDir"
+}
+
+
+build()
+{
+  local tag="$1"
+  local context="$2"
+  local envFile="$3"
+  local scriptDir="$4"
 
   . "$envFile"
   check_env CYVERSE_DS_RES_NAME
