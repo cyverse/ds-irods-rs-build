@@ -13,8 +13,8 @@
 #
 # To allow iRODS to run as a non-root user and still mount volumes, this script
 # allows for the ability to run iRODS with as a user from the docker host
-# server. To do this, set the environment variable LOCAL_USER_ID to the name of
-# the host user to run iRODS as.
+# server. To do this, set the environment variable CYVERSE_DS_HOST_UID to the
+# UID of the host user to run iRODS as.
 #
 # If a command is provided to this script, it will be executed as the
 # appropriate user after the configuration has been updated. Otherwise, a bash
@@ -26,12 +26,11 @@
 #                               user with the IES.
 # CYVERSE_DS_CONTROL_PLANE_KEY  the encryption key required for communicating
 #                               over the relevant iRODS grid control plane
+# CYVERSE_DS_HOST_UID           the UID on the hosting server to run iRODS as
 # CYVERSE_DS_NEGOTIATION_KEY    the encryption key shared by the iplant zone for
 #                               advanced negotiation during client connections
 # CYVERSE_DS_ZONE_KEY           the shared secret used during server-to-server
 #                               communication
-# LOCAL_USER_ID                 the UID on the hosting server to run iRODS as
-#
 
 
 main()
@@ -53,9 +52,9 @@ main()
      .zone_key                 |= \"$CYVERSE_DS_ZONE_KEY\"" \
     /etc/irods/server_config.json
 
-  if [ -n "$LOCAL_USER_ID" ]
+  if [ -n "$CYVERSE_DS_HOST_UID" ]
   then
-    printf 'Executing as irods-override (UID:%s)\n' "$LOCAL_USER_ID"
+    printf 'Executing as irods-override (UID:%s)\n' "$CYVERSE_DS_HOST_UID"
 
     local user=irods-override
 
@@ -64,7 +63,7 @@ main()
             --groups irods \
             --home-dir /var/lib/irods \
             --shell /bin/bash \
-            --uid "$LOCAL_USER_ID" \
+            --uid "$CYVERSE_DS_HOST_UID" \
             "$user"
   else
     printf 'Executing as irods\n'

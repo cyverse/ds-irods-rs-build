@@ -57,23 +57,23 @@ EXPOSE 1247/tcp 1248/tcp 20000-20009/tcp 20000-20009/udp
 
 WORKDIR /var/lib/irods
 
-ENV CONTROL_PLANE_KEY=
-ENV LOCAL_USER_ID=
-ENV NEGOTIATION_KEY=
-ENV ZONE_KEY=
+ENV CYVERSE_DS_CONTROL_PLANE_KEY=
+ENV CYVERSE_DS_HOST_UID=
+ENV CYVERSE_DS_NEGOTIATION_KEY=
+ENV CYVERSE_DS_ZONE_KEY=
 
 ENTRYPOINT [ "/entrypoint" ]
 
-ONBUILD ARG CLERVER_USER_NAME=ipc_admin
-ONBUILD ARG DEFAULT_RESOURCE_NAME=CyVerseRes
-ONBUILD ARG DEFAULT_RESOURCE_DIR=
-ONBUILD ARG RS_CNAME
+ONBUILD ARG CYVERSE_DS_CLERVER_USER=ipc_admin
+ONBUILD ARG CYVERSE_DS_DEFAULT_RESOURCE=CyVerseRes
+ONBUILD ARG CYVERSE_DS_CONTAINER_VAULT
+ONBUILD ARG CYVERSE_DS_SERVER_CNAME
 
 ONBUILD RUN /on-build-instantiate && \
-            mkdir --parents "$DEFAULT_RESOURCE_DIR" && \
+            mkdir --parents "$CYVERSE_DS_CONTAINER_VAULT" && \
             chown --recursive \
-                  irods:irods "$DEFAULT_RESOURCE_DIR" /etc/irods /var/lib/irods/.irods && \
-            chmod g+w "$DEFAULT_RESOURCE_DIR" && \
+                  irods:irods "$CYVERSE_DS_CONTAINER_VAULT" /etc/irods /var/lib/irods/.irods && \
+            chmod g+w "$CYVERSE_DS_CONTAINER_VAULT" && \
             rm --force /on-build-instantiate
 
-ONBUILD VOLUME "$DEFAULT_RESOURCE_DIR"
+ONBUILD VOLUME "$CYVERSE_DS_CONTAINER_VAULT"
