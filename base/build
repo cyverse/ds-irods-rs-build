@@ -4,17 +4,19 @@
 #  build
 #
 # This program builds the ds-res-base-onbuild image that forms the base image
-# for CyVerse Data Store resource server images.
-#
+# for CyVerse Data Store resource server images. Each build is tagged with the
+# number ISO 8601 style build time.
 
 readonly BaseDir=$(dirname $(readlink --canonicalize "$0"))
 
 
 main()
 {
+  local tag=$(date --utc '+%Y-%m-%dT%H-%M-%S')
   "$BaseDir"/irods-netcdf-build/build centos7
   "$BaseDir"/irods-setavu-plugin/build centos7
   docker build --tag ds-res-base-onbuild "$BaseDir"
+  docker tag ds-res-base-onbuild:latest ds-res-base-onbuild:"$tag"
 }
 
 

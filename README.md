@@ -4,6 +4,38 @@ An iRODS resource server that runs in a Docker container. The container is
 configured for the CyVerse Data Store.
 
 
+## Prerequisites
+
+Before this a generated image can be used, there are a few things that need to
+be done first.
+
+First, the storage resource needs to be defined within the CyVerse Data Store.
+The vault path within the container will be a subdirectory of `/irods_vault`
+with the same name as the storage resource being served, i.e.,
+`/irods_vault/"$CYVERSE_DS_RES_NAME"`. This can be done with a command like the
+following.
+
+```
+iadmin mkresc "$CYVERSE_DS_RES_NAME" 'unix file system' \
+              "$CYVERSE_DS_RES_SERVER":/irods_vault/"$CYVERSE_DS_RES_NAME"
+```
+
+Next, the corresponding coordinating resource needs to be created for the
+storage resource. The name of the coordinate resource needs to be the name of
+the storage resource with `Res` appended, i.e., `"$CYVERSE_DS_RES_NAME"Res`.
+This will be the default resource served by the resource server. This can be
+done with a set of commands like the following.
+
+```
+coordRes="$CYVERSE_DS_RES_NAME"Res
+iadmin mkresc "$coordRes" passthru
+iadmin addchildtoresc "$coordRes" "$CYVERSE_DS_RES_NAME"
+```
+
+Finally, the vault directory on the server hosting the container needs to
+exist and be writable by the user that will be running the container.
+
+
 ## Generating the Docker source files
 
 The `prep-rs-docker-src` program can be used to create a `Dockerfile` file and a
@@ -90,38 +122,6 @@ CYVERSE_DS_ZONE_KEY=SECRET_zone_key
 
 prompt> docker-compose up -d
 ```
-
-## Prerequisites
-
-Before this a generated image can be used, there are a few things that need to
-be done first.
-
-First, the storage resource needs to be defined within the CyVerse Data Store.
-The vault path within the container will be a subdirectory of `/irods_vault`
-with the same name as the storage resource being served, i.e.,
-`/irods_vault/"$CYVERSE_DS_RES_NAME"`. This can be done with a command like the
-following.
-
-```
-iadmin mkresc "$CYVERSE_DS_RES_NAME" 'unix file system' \
-              "$CYVERSE_DS_RES_SERVER":/irods_vault/"$CYVERSE_DS_RES_NAME"
-```
-
-Next, the corresponding coordinating resource needs to be created for the
-storage resource. The name of the coordinate resource needs to be the name of
-the storage resource with `Res` appended, i.e., `"$CYVERSE_DS_RES_NAME"Res`.
-This will be the default resource served by the resource server. This can be
-done with a set of commands like the following.
-
-```
-coordRes="$CYVERSE_DS_RES_NAME"Res
-iadmin mkresc "$coordRes" passthru
-iadmin addchildtoresc "$coordRes" "$CYVERSE_DS_RES_NAME"
-```
-
-Finally, the vault directory on the server hosting the container needs to
-exist and be writable by the user that will be running the container.
-
 
 ## Repository Dependencies
 
