@@ -183,7 +183,7 @@ services:
         CYVERSE_DS_CONTAINER_VAULT: $containerVault
         CYVERSE_DS_DEFAULT_RESOURCE: $defaultRes
         CYVERSE_DS_HOST_UID: \$CYVERSE_DS_HOST_UID
-        CYVERSE_DS_SERVER_CNAME: $CYVERSE_DS_RES_SERVER
+        CYVERSE_DS_RES_SERVER: $CYVERSE_DS_RES_SERVER
       context: .
     env_file: run.env
     hostname: rs

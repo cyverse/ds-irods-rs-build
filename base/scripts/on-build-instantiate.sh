@@ -21,7 +21,7 @@
 # CYVERSE_DS_HOST_UID          (optional) the UID of the hosting server to run
 #                              iRODS as instead of the default user defined in
 #                              the container
-# CYVERSE_DS_SERVER_CNAME      the FQDN or address used by the rest of the grid
+# CYVERSE_DS_RES_SERVER        the FQDN or address used by the rest of the grid
 #                              to communicate with this server
 
 
@@ -29,7 +29,7 @@ main()
 {
   jq_in_place \
     "(.host_entries[] | select(.address_type == \"local\") | .addresses)
-       |= . + [{\"address\": \"$CYVERSE_DS_SERVER_CNAME\"}]" \
+       |= . + [{\"address\": \"$CYVERSE_DS_RES_SERVER\"}]" \
     /etc/irods/hosts_config.json
 
   jq_in_place \
