@@ -35,6 +35,13 @@ Environment Variables:
  CYVERSE_DS_CLERVER_USER  (optional) the name of the rodsadmin user representing
                           the resource server within the zone: default
                           'ipc_admin'
+ CYVERSE_DS_HOST_UID      (optional) the UID of the hosting server to run iRODS
+                          as instead of the default user defined in the
+                          container
+ CYVERSE_DS_LOG_DIR       (optional) the absolute path on the server hosting the
+                          container where iRODS will write its logs: default 
+                          '<home>/log' where <home> is the home directory of the
+                          user starting the docker container
  CYVERSE_DS_RES_NAME      the name of the storage resource that will be served
  CYVERSE_DS_RES_SERVER    the FQDN or address used by the IES and other resource
                           servers to communicate with this one
@@ -175,6 +182,7 @@ mk_build_cmd()
 docker build --build-arg CYVERSE_DS_CLERVER_USER="$user" \
              --build-arg CYVERSE_DS_CONTAINER_VAULT="$containerVault" \
              --build-arg CYVERSE_DS_DEFAULT_RESOURCE="$defaultResName" \
+             --build-arg CYVERSE_DS_HOST_UID="$CYVERSE_DS_HOST_UID" \
              --build-arg CYVERSE_DS_SERVER_CNAME="$CYVERSE_DS_RES_SERVER" \
              --tag "$tag" \
              $srcAccess
@@ -265,7 +273,6 @@ then
 
   docker run \\
       --detach --tty \\
-      --env CYVERSE_DS_HOST_UID="\$(id --user)" \\
       --env-file "\$secrets" \\
       --hostname rs \\
       --mount type=bind,source='$hostVault',target='$containerVault' \\

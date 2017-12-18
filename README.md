@@ -26,6 +26,7 @@ environment file when it is executed.
 Environment Variable      | Required | Default       | Description
 ------------------------- | -------- | ------------- | -----------
 `CYVERSE_DS_CLERVER_USER` | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
+`CYVERSE_DS_HOST_UID`     | no       |               | the UID of the hosting server to run iRODS as instead of the default user defined in the container
 `CYVERSE_DS_LOG_DIR`      | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
 `CYVERSE_DS_RES_NAME`     | yes      |               | the name of the storage resource that will be served
 `CYVERSE_DS_RES_SERVER`   | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
