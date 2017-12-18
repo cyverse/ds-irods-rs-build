@@ -1,0 +1,208 @@
+#! /bin/bash
+
+
+show_help()
+{
+  cat <<'EOF'
+
+prep-rs-docker-src
+
+Usage:
+ prep-rs-docker-src [options] <tag> <cfg-file> <out-dir>
+
+Creates a Dockerfile file and a docker-compose.yml file that can be used to
+build and run a container hosting an iRODS resource server configured to be
+part of the CyVerse Data Store.
+
+Parameters:
+ <tag>       the docker image tag
+ <env-file>  the file providing the required environment variables, see below
+ <out-dir>   the directory where the docker files will be written: defaults to
+             current working directory
+
+Options:
+ -h, --help  show help and exit
+
+Environment Variables:
+ CYVERSE_DS_CLERVER_USER  (optional) the name of the rodsadmin user representing
+                          the resource server within the zone: default
+                          'ipc_admin'
+ CYVERSE_DS_HOST_UID      (optional) the UID of the hosting server to run iRODS
+                          as instead of the default user defined in the
+                          container
+ CYVERSE_DS_LOG_DIR       (optional) the absolute path on the server hosting the
+                          container where iRODS will write its logs: default
+                          '<home>/log' where <home> is the home directory of the
+                          user starting the docker container
+ CYVERSE_DS_RES_NAME      the name of the storage resource that will be served
+ CYVERSE_DS_RES_SERVER    the FQDN or address used by the IES and other resource
+                          servers to communicate with this one
+ CYVERSE_DS_RES_VAULT     (optional) the host directory where the container will
+                          mount the vault: default '<home>/vault', where <home>
+                          is the home directory of the user starting the docker
+                          container
+EOF
+}
+
+
+main()
+{
+  local outDir=.
+
+  local opts=
+
+  if ! opts=$(getopt --name prep-rs-docker-src --options h --longoptions help -- "$@")
+  then
+    show_help >&2
+    return 1
+  fi
+
+  eval set -- "$opts"
+
+  while true
+  do
+    case "$1" in
+      -h|--help)
+        show_help
+        return 0
+        ;;
+      --)
+       shift
+       break
+       ;;
+      *)
+        show_help >&2
+        return 1
+        ;;
+    esac
+  done
+
+  if [ "$#" -lt 1 ]
+  then
+    printf 'An image tag is required.\n' >&2
+    show_help >&2
+    return 1
+  fi
+
+  local tag="$1"
+
+  if [ "$#" -lt 2 ]
+  then
+    printf 'An environment file is required.\n' >&2
+    show_help >&2
+    return 1
+  fi
+
+  local envFile="$2"
+
+  if [ "$#" -ge 3 ]
+  then
+    outDir="$3"
+  fi
+
+  build "$tag" "$envFile" "$outDir"
+}
+
+
+build()
+{
+  local tag="$1"
+  local envFile="$2"
+  local outDir="$3"
+
+  . "$envFile"
+  check_env CYVERSE_DS_RES_NAME
+  check_env CYVERSE_DS_RES_SERVER
+
+  local containerVault=/irods_vault/"$CYVERSE_DS_RES_NAME"
+  local defaultRes="$CYVERSE_DS_RES_NAME"Res
+  local hostVault="${CYVERSE_DS_RES_VAULT:-\$HOME/vault}"
+  local hostLog="${CYVERSE_DS_LOG_DIR:-\$HOME/log}"
+  local user="${CYVERSE_DS_CLERVER_USER:-ipc_admin}"
+
+  printf 'FROM ds-res-base-onbuild\n' > "$outDir"/Dockerfile
+
+  mk_compose_file "$tag" "$defaultRes" "$user" "$hostLog" "$hostVault" "$containerVault" \
+    > "$outDir"/docker-compose.yml
+}
+
+
+#
+# Checks for the existence of an environment variable. If the variable doesn't
+# exist, it writes a message to standard error and returns 1.
+#
+# Parameter:
+#  var  the environment variable to check
+#
+check_env()
+{
+  local var="$1"
+
+  if [ -z "${!var}" ]
+  then
+    printf 'The environment variable %s is not set.\n' "$var" >&2
+    show_help >&2
+    return 1
+  fi
+}
+
+
+#
+# Generate a script for starting a container from the newly build image.
+#
+# Parameters:
+#  tag             the tag of the image to start
+#  defaultRes      the name of the coordinating resource the server will use by
+#                  default
+#  user            the name of the rodsadmin user the server will authenticate
+#                  as
+#  hostLog         the host directory where teh container will mount
+#                  /var/lib/irods/iRODS/server/log
+#  hostVault       the host directory where the container will mount its vault
+#  containerVault  the base directory within the container where the files will
+#                  be stored
+#
+mk_compose_file()
+{
+  local tag="$1"
+  local defaultRes="$2"
+  local user="$3"
+  local hostLog="$4"
+  local hostVault="$5"
+  local containerVault="$6"
+
+  cat <<EOF
+---
+version: '2'
+
+services:
+  cyverse-rs:
+    build:
+      args:
+        CYVERSE_DS_CLERVER_USER: $user
+        CYVERSE_DS_CONTAINER_VAULT: $containerVault
+        CYVERSE_DS_DEFAULT_RESOURCE: $defaultRes
+        CYVERSE_DS_HOST_UID: \$CYVERSE_DS_HOST_UID
+        CYVERSE_DS_SERVER_CNAME: $CYVERSE_DS_RES_SERVER
+      context: .
+    env_file: run.env
+    hostname: rs
+    image: $tag
+    ports:
+      - "1247:1247/tcp"
+      - "1248:1248/tcp"
+      - "20000-20009:20000-20009/tcp"
+      - "20000-20009:20000-20009/udp"
+    restart: on-failure
+    tmpfs: /var/lib/irods/iRODS/server/log/proc
+    tty: true
+    volumes:
+      - $hostVault:/irods_vault/unl
+      - $hostLog:/var/lib/irods/iRODS/server/log
+EOF
+}
+
+
+set -e
+
+main "$@"
