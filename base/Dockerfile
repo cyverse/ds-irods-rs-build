@@ -1,21 +1,6 @@
-FROM centos:7 AS gosu-builder
+FROM centos:7
 MAINTAINER Tony Edgin <tedgin@cyverse.org>
 
-ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 /gosu
-ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64.asc /gosu.asc
-
-RUN mkdir --parents /root/.gnupg
-RUN touch /root/.gnupg/gpg.conf
-RUN gpg --quiet \
-        --keyserver hkp://ha.pool.sks-keyservers.net:80 \
-        --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN gpg --quiet --verify /gosu.asc
-RUN chmod +x /gosu
-
-
-FROM centos:7
-
-COPY --from=gosu-builder /gosu /usr/local/bin
 COPY irods-netcdf-build/packages/centos7/* /tmp/
 
 RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
@@ -46,10 +31,10 @@ COPY scripts/start-irods.sh /start-irods
 COPY scripts/entrypoint.sh /entrypoint
 COPY scripts/on-build-instantiate.sh /on-build-instantiate
 
-RUN chown --recursive irods:irods /start-irods /var/lib/irods && \
+RUN chown --recursive irods:irods /entrypoint /start-irods /var/lib/irods && \
     chmod ug+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
-    chmod ug+x /start-irods && \
-    chmod u+x /entrypoint /on-build-instantiate
+    chmod ug+x /entrypoint /start-irods && \
+    chmod u+x /on-build-instantiate
 
 VOLUME /var/lib/irods/iRODS/server/log /var/lib/irods/iRODS/server/log/proc
 
@@ -77,3 +62,5 @@ ONBUILD RUN /on-build-instantiate && \
             rm --force /on-build-instantiate
 
 ONBUILD VOLUME "$CYVERSE_DS_CONTAINER_VAULT"
+
+ONBUILD USER irods-host-user
