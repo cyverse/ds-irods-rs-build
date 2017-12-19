@@ -42,12 +42,14 @@ EXPOSE 1247/tcp 1248/tcp 20000-20009/tcp 20000-20009/udp
 
 WORKDIR /var/lib/irods
 
+# These need to be provided at run time.
 ENV CYVERSE_DS_CONTROL_PLANE_KEY=
 ENV CYVERSE_DS_NEGOTIATION_KEY=
 ENV CYVERSE_DS_ZONE_KEY=
 
 ENTRYPOINT [ "/entrypoint" ]
 
+# These need to be provided at the build time of a derived container
 ONBUILD ARG CYVERSE_DS_CLERVER_USER=ipc_admin
 ONBUILD ARG CYVERSE_DS_DEFAULT_RESOURCE=CyVerseRes
 ONBUILD ARG CYVERSE_DS_HOST_UID=
