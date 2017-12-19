@@ -55,6 +55,7 @@ an environment file when it is executed.
 Environment Variable      | Required | Default       | Description
 ------------------------- | -------- | ------------- | -----------
 `CYVERSE_DS_CLERVER_USER` | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
+`CYVERSE_DS_HOST_UID`     | no       |               | the UID of the hosting server to run iRODS as instead of the default user defined in the container
 `CYVERSE_DS_LOG_DIR`      | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
 `CYVERSE_DS_RES_NAME`     | yes      |               | the name of the storage resource that will be served
 `CYVERSE_DS_RES_SERVER`   | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
@@ -73,24 +74,11 @@ prompt> ls project
 docker-compose.yml  Dockerfile
 ```
 
-## Building and Running the Resource server
+## Running the Resource server
 
-`docker-compose` is used to both build an run the iRODS resource server.
-
-If the container needs to be run by a user with a special UID due to file system
-permissions, the environment variable `CYVERSE_DS_HOST_UID` should be set that
-UID when docker-compose builds the image. For example if the user `fs-owner`
-should be used to access the files on the file system holding the iRODS vault
-and logs, something like the following command should be used to build the
-image.
-
-```bash
-prompt> CYVERSE_DS_HOST_UID=$(id --user fs-owner) docker-compose build
-```
-
-When starting iRODS, the `docker-compose.yml` file assumes there is a file named
-`run.env` in the same directory. It should have the following environment
-variables defined in it.
+`docker-compose` is used to run the iRODS resource server. The
+`docker-compose.yml` file assumes there is a file named `run.env` in the same
+directory. It should have the following environment variables defined in it.
 
 Environment Variable           | Description
 ------------------------------ | -----------

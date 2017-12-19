@@ -47,16 +47,22 @@ main()
 
   printf "\nipc_DEFAULT_RESC = '%s'\n" "$CYVERSE_DS_DEFAULT_RESOURCE" >> /etc/irods/ipc-env.re
 
+  local hostUID=
+
   if [ -n "$CYVERSE_DS_HOST_UID" ]
   then
-    useradd --no-create-home --non-unique \
-            --comment 'iRODS Administrator override' \
-            --groups irods \
-            --home-dir /var/lib/irods \
-            --shell /bin/bash \
-            --uid "$CYVERSE_DS_HOST_UID" \
-            irods-override
+    hostUID="$CYVERSE_DS_HOST_UID"
+  else
+    hostUID=$(id --user irods)
   fi
+
+  useradd --no-create-home --non-unique \
+          --comment 'iRODS Administrator override' \
+          --groups irods \
+          --home-dir /var/lib/irods \
+          --shell /bin/bash \
+          --uid "$hostUID" \
+          irods-override
 }
 
 

@@ -77,5 +77,3 @@ ONBUILD RUN /on-build-instantiate && \
             rm --force /on-build-instantiate
 
 ONBUILD VOLUME "$CYVERSE_DS_CONTAINER_VAULT"
-
-ONBUILD ENV CYVERSE_DS_HOST_UID=$CYVERSE_DS_HOST_UID
