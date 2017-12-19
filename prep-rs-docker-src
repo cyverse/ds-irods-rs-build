@@ -109,7 +109,7 @@ build()
   local hostLog="${CYVERSE_DS_LOG_DIR:-\$HOME/log}"
   local user="${CYVERSE_DS_CLERVER_USER:-ipc_admin}"
 
-  printf 'FROM ds-res-base-onbuild\n' > "$outDir"/Dockerfile
+  printf 'FROM cyverse/ds-res-base-onbuild:latest\n' > "$outDir"/Dockerfile
 
   mk_compose_file "$defaultRes" "$user" "$hostLog" "$hostVault" "$containerVault" \
     > "$outDir"/docker-compose.yml

@@ -15,8 +15,8 @@ main()
   local tag=$(date --utc '+%Y-%m-%dT%H-%M-%S')
   "$BaseDir"/irods-netcdf-build/build centos7
   "$BaseDir"/irods-setavu-plugin/build centos7
-  docker build --tag ds-res-base-onbuild "$BaseDir"
-  docker tag ds-res-base-onbuild:latest ds-res-base-onbuild:"$tag"
+  docker build --tag cyverse/ds-res-base-onbuild "$BaseDir"
+  docker tag cyverse/ds-res-base-onbuild:latest cyverse/ds-res-base-onbuild:"$tag"
 }
 
 
