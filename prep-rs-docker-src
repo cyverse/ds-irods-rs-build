@@ -171,6 +171,7 @@ services:
         CYVERSE_DS_DEFAULT_RESOURCE: $defaultRes
         CYVERSE_DS_HOST_UID: $CYVERSE_DS_HOST_UID
         CYVERSE_DS_RES_SERVER: $CYVERSE_DS_RES_SERVER
+        CYVERSE_DS_STORAGE_RESOURCE: $CYVERSE_DS_RES_NAME
       context: .
     env_file: cyverse-secrets.env
     hostname: rs

@@ -23,6 +23,7 @@
 #                              the container
 # CYVERSE_DS_RES_SERVER        the FQDN or address used by the rest of the grid
 #                              to communicate with this server
+# CYVERSE_DS_STORAGE_RESOURCE  the unix file system resource to server
 
 
 main()
@@ -46,6 +47,8 @@ main()
     /var/lib/irods/.irods/irods_environment.json
 
   printf "\nipc_DEFAULT_RESC = '%s'\n" "$CYVERSE_DS_DEFAULT_RESOURCE" >> /etc/irods/ipc-env.re
+
+  sed --in-place "s/\\\$CYVERSE_DS_STORAGE_RESOURCE/$CYVERSE_DS_STORAGE_RESOURCE/g" /start-irods
 
   local hostUID=
 
