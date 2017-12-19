@@ -57,12 +57,12 @@ main()
   fi
 
   useradd --no-create-home --non-unique \
-          --comment 'iRODS Administrator override' \
+          --comment 'iRODS Administrator (host user)' \
           --groups irods \
           --home-dir /var/lib/irods \
           --shell /bin/bash \
           --uid "$hostUID" \
-          irods-override
+          irods-host-user
 }
 
 

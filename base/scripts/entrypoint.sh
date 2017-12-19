@@ -46,7 +46,7 @@ main()
      .zone_key                 |= \"$CYVERSE_DS_ZONE_KEY\"" \
     /etc/irods/server_config.json
 
-  exec gosu irods-override "${cmdTerms[@]}"
+  exec gosu irods-host-user "${cmdTerms[@]}"
 }
 
 
