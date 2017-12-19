@@ -44,7 +44,7 @@ following commands need to be executed to upgrade the resource server.
 
 ```bash
 docker-compose build
-docker-compose up
+docker-compose up -d
 ```
 
 If for some reason a base image upgrade doesn't work, the resource server can be
