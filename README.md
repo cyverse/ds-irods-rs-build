@@ -15,7 +15,7 @@ with the same name as the storage resource being served, i.e.,
 `/irods_vault/"$CYVERSE_DS_RES_NAME"`. This can be done with a command like the
 following.
 
-```
+```bash
 iadmin mkresc "$CYVERSE_DS_RES_NAME" 'unix file system' \
               "$CYVERSE_DS_RES_SERVER":/irods_vault/"$CYVERSE_DS_RES_NAME"
 ```
@@ -26,7 +26,7 @@ the storage resource with `Res` appended, i.e., `"$CYVERSE_DS_RES_NAME"Res`.
 This will be the default resource served by the resource server. This can be
 done with a set of commands like the following.
 
-```
+```bash
 coordRes="$CYVERSE_DS_RES_NAME"Res
 iadmin mkresc "$coordRes" passthru
 iadmin addchildtoresc "$coordRes" "$CYVERSE_DS_RES_NAME"
@@ -63,7 +63,7 @@ Environment Variable      | Required | Default       | Description
 
 Here's an example.
 
-```bash
+```
 prompt> cat build.env
 CYVERSE_DS_RES_NAME=rs
 CYVERSE_DS_RES_SERVER=rs.domain.net
@@ -76,7 +76,9 @@ docker-compose.yml  Dockerfile
 
 ## Running the Resource server
 
-`docker-compose` is used to run the iRODS resource server. The
+**docker-compose version 1.8 or newer is required.**
+
+docker-compose is used to run the iRODS resource server. The
 `docker-compose.yml` file assumes there is a file named `run.env` in the same
 directory. It should have the following environment variables defined in it.
 
@@ -89,7 +91,7 @@ Environment Variable           | Description
 
 Here's an example.
 
-```bash
+```
 prompt> ls
 docker-compose.yml  Dockerfile  run.env
 
@@ -106,7 +108,7 @@ CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
 CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
 CYVERSE_DS_ZONE_KEY=SECRET_zone_key
 
-prompt> docker-compose up -d
+prompt> docker-compose up --build -d
 ```
 
 ## Repository Dependencies
