@@ -172,7 +172,7 @@ services:
         CYVERSE_DS_HOST_UID: $CYVERSE_DS_HOST_UID
         CYVERSE_DS_RES_SERVER: $CYVERSE_DS_RES_SERVER
       context: .
-    env_file: run.env
+    env_file: cyverse-secrets.env
     hostname: rs
     ports:
       - "1247:1247/tcp"

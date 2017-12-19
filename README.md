@@ -24,7 +24,8 @@ The base image will be hosted on Docker Hub in the cyverse repository.
 
 All of the sensitive information that would normally be set in the iRODS
 configuration files as well as the clerver password have been removed. They must
-be provided in a file named `run.env` that will be loaded at run time.
+be provided in a file named `cyverse-secrets.env` that will be loaded at run
+time.
 
 docker-compose was chosen as the tool to manage the building of the top level
 image as well as starting and stopping its container instance.
@@ -36,10 +37,10 @@ specific configuration values. In most cases, the generated files can be used
 without modification.
 
 There are three deployment artifacts: `Dockerfile`, `docker-compose.yml`, and
-`run.env`. Once the correct configuration values have been defined, these files
-will likely rarely needed to be modified.  All changes to Data Store business
-logic will be made to the base image. This means that only the following
-commands need to be executed to upgrade the resource server.
+`cyverse-secrets.env`. Once the correct configuration values have been defined,
+these files will likely rarely needed to be modified.  All changes to Data Store
+business logic will be made to the base image. This means that only the
+following commands need to be executed to upgrade the resource server.
 
 ```bash
 docker-compose build
@@ -199,8 +200,9 @@ docker-compose.yml  Dockerfile
 ### Running the Resource Server
 
 docker-compose is used to run the iRODS resource server. The
-`docker-compose.yml` file assumes there is a file named `run.env` in the same
-directory. It should have the following environment variables defined in it.
+`docker-compose.yml` file assumes there is a file named `cyverse-secrets.env` in
+the same directory. It should have the following environment variables defined
+in it.
 
 Environment Variable           | Description
 ------------------------------ | -----------
@@ -213,9 +215,9 @@ Here's an example.
 
 ```
 prompt> ls
-docker-compose.yml  Dockerfile  run.env
+docker-compose.yml  Dockerfile  cyverse-secrets.env
 
-prompt> cat run.env
+prompt> cat cyverse-secrets.env
 ###
 # *** DO NOT SHARE THIS FILE ***
 #
