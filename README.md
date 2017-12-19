@@ -89,9 +89,6 @@ resource server as part of the CyVerse Data Store.
 
 ### Host Machine
 
-**TODO** Determine host machine memory and processor requirements as well as
-storage and log file requirements.
-
 The server hosting the containerized resource server needs to have
 docker-compose version 1.8 or new installed.
 
@@ -119,6 +116,11 @@ Any clients that need to connect directly to this resource server, will need to
 potentially use 1247/TCP, 20000-20009/TCP, and 20000-20009/UDP. The firewalls
 and router ACLs will need to allow access from these clients as well.
 
+Here are the minimum reasonable requirements for the host server. It should be
+running a 64-bit operating system that has stable support for Docker, like
+CentOS 7. It should have at least two cores and 8 GiB of memory as well. The
+file system hosting the vault should have at least 256 GiB of storage, and the
+one hosting the logs should have at least 16 GiB.
 
 ### Preparing CyVerse's iRODS Zone
 
