@@ -25,7 +25,7 @@ main()
 
   IRODS_HOST=data.cyverse.org iinit "$CYVERSE_DS_CLERVER_PASSWORD"
   /var/lib/irods/iRODS/irodsctl start
-  iadmin modresc "$CYVERSE_DS_STORAGE_RESOURCE" status up
+  iadmin modresc "$CYVERSE_DS_STORAGE_RES" status up
   trap stop SIGTERM
   printf 'Ready\n'
 
@@ -43,7 +43,7 @@ main()
 
 stop()
 {
-  iadmin modresc "$CYVERSE_DS_STORAGE_RESOURCE" status down
+  iadmin modresc "$CYVERSE_DS_STORAGE_RES" status down
   /var/lib/irods/iRODS/irodsctl stop
 
   if [ -n "$tailPid" ]
