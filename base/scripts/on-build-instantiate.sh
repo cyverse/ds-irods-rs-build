@@ -48,7 +48,9 @@ main()
 
   printf "\nipc_DEFAULT_RESC = '%s'\n" "$CYVERSE_DS_DEFAULT_RES" >> /etc/irods/ipc-env.re
 
-  sed --in-place "s/\\\$CYVERSE_DS_STORAGE_RES/$CYVERSE_DS_STORAGE_RES/g" /start-irods
+  mk_start_program > /start-irods
+  chmod ug+x /start-irods
+  chown irods:irods /start-irods
 
   local hostUID=
 
@@ -75,6 +77,64 @@ jq_in_place()
   local file="$2"
 
   jq "$filter" "$file" | awk 'BEGIN { RS=""; getline<"-"; print>ARGV[1] }' "$file"
+}
+
+
+mk_start_program()
+{
+  cat <<EOF
+#! /bin/bash
+#
+# Usage:
+#  start-irods
+#
+# This script starts the iRODS resource server and waits for a SIGTERM. It
+# expects the environment variable CYVERSE_DS_CLERVER_PASSWORD to hold clerver
+# user password.
+#
+
+set -e
+
+tailPid=
+
+
+stop()
+{
+  iadmin modresc "$CYVERSE_DS_STORAGE_RES" status down
+  /var/lib/irods/iRODS/irodsctl stop
+
+  if [ -n "\$tailPid" ]
+  then
+    kill "\$tailPid"
+    wait "\$tailPid"
+  fi
+}
+
+
+# Wait for IES to become available
+until exec 3<> /dev/tcp/data.cyverse.org/1247
+do
+  printf 'Waiting for IES\n'
+  sleep 1
+done 2> /dev/null
+
+exec 3<&-
+exec 3>&-
+
+IRODS_HOST=data.cyverse.org iinit "\$CYVERSE_DS_CLERVER_PASSWORD"
+/var/lib/irods/iRODS/irodsctl start
+iadmin modresc "$CYVERSE_DS_STORAGE_RES" status up
+trap stop SIGTERM
+printf 'Ready\n'
+
+while irodsPid=\$(pidof -s /var/lib/irods/iRODS/server/bin/irodsServer)
+do
+  tail --follow /dev/null --pid "\$irodsPid" &
+  tailPid="\$!"
+  wait "\$tailPid"
+  tailPid=
+done
+EOF
 }
 
 
