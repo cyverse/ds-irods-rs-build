@@ -184,7 +184,7 @@ services:
     tmpfs: /var/lib/irods/iRODS/server/log/proc
     tty: true
     volumes:
-      - $hostVault:/irods_vault/unl
+      - $hostVault:$containerVault
       - $hostLog:/var/lib/irods/iRODS/server/log
 EOF
 }
