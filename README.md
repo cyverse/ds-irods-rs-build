@@ -132,10 +132,11 @@ within the CyVerse Data Store. The vault path within the container will be a
 subdirectory of `/irods_vault` with the same name as resource being served. For
 example, if the resource is to be named _demo_, then the vault path will be
 `/irods_vault/demo`. If the hosting server's public name is _rs.domain.net_,
-then defining the resource can be done with a command like the following.
+then defining the resource can be done with commands like the following.
 
 ```bash
 iadmin mkresc demo 'unix file system' rs.domain.net:/irods_vault/demo
+iadmin modresc demo status down
 ```
 
 Next, the corresponding passthru resource needs to be created for the unix file
