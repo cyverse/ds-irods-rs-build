@@ -82,7 +82,7 @@ irods-plugin-build            4.1.10-centos7        4565bc1db9fe        3 minute
 centos                        7                     3fa822599e10        2 weeks ago          204MB
 ```
 
-## Setting Up Resource Server
+## Setting Up the Resource Server
 
 This section describes what needs to be done to run a containerized iRODS
 resource server as part of the CyVerse Data Store.
