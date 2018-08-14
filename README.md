@@ -38,18 +38,18 @@ without modification.
 
 There are three deployment artifacts: `Dockerfile`, `docker-compose.yml`, and
 `cyverse-secrets.env`. Once the correct configuration values have been defined,
-these files will likely rarely needed to be modified.  All changes to Data Store
+these files will likely rarely need to be modified. All changes to Data Store
 business logic will be made to the base image. This means that only the
 following commands need to be executed to upgrade the resource server.
 
 ```bash
-docker-compose build
-docker-compose up -d
+prompt> docker-compose build
+prompt> docker-compose up -d
 ```
 
 If for some reason a base image upgrade doesn't work, the resource server can be
 reverted to the last good base image by modifying the Dockerfile to use the tag
-of the good image. The used the commands above to redeploy the reverted resource
+of the good image. Used the commands above to redeploy the reverted resource
 server.
 
 
@@ -67,7 +67,7 @@ digit day of the month number, _**hh**_ is the two digit hour of the day,
 _**mm**_ is the two digit minutes past the hour, and _**ss**_ is the two digit
 seconds past the minute. The _latest_ tag will point to the most recent build.
 
-```
+```bash
 prompt> date -u
 Tue Dec 19 17:21:45 UTC 2017
 
@@ -82,7 +82,7 @@ irods-plugin-build            4.1.10-centos7        4565bc1db9fe        3 minute
 centos                        7                     3fa822599e10        2 weeks ago          204MB
 ```
 
-## Setting Up the Resource Server
+## Setting up the Resource Server
 
 This section describes what needs to be done to run a containerized iRODS
 resource server as part of the CyVerse Data Store.
@@ -95,7 +95,7 @@ docker-compose version 1.8 or new installed.
 There needs to be a user on the host machine that the container will use to
 run the iRODS resource server.
 
-Two directories on the hosting server's file systems needs to be setup. One
+Two directories on the hosting server's file system need to be setup. One
 directory will be used by the container to store the files managed by the
 resource server. The other will be used to store the generated log files. Both
 of these directories will need to be writable by the user running iRODS.
@@ -124,10 +124,10 @@ one hosting the logs should have at least 16 GiB.
 
 ### Preparing CyVerse's iRODS Zone
 
-Before this a generated image can be used, there are a few things that need to
-be done first.
+Before this generated image can be used, there are a few things that need to be
+done.
 
-First, the resource server's unix file system resource needs to be defined
+First, the resource server's UNIX file system resource needs to be defined
 within the CyVerse Data Store. The vault path within the container will be a
 subdirectory of `/irods_vault` with the same name as resource being served. For
 example, if the resource is to be named _demo_, then the vault path will be
@@ -135,20 +135,20 @@ example, if the resource is to be named _demo_, then the vault path will be
 then defining the resource can be done with commands like the following.
 
 ```bash
-iadmin mkresc demo 'unix file system' rs.domain.net:/irods_vault/demo
-iadmin modresc demo status down
+prompt> iadmin mkresc demo 'unix file system' rs.domain.net:/irods_vault/demo
+prompt> iadmin modresc demo status down
 ```
 
-Next, the corresponding passthru resource needs to be created for the unix file
+Next, the corresponding passthru resource needs to be created for the UNIX file
 system resource. The name of the passthru resource needs to be the name of
-the unix file system resource with _Res_ appended. For example, if the unix file
+the UNIX file system resource with _Res_ appended. For example, if the UNIX file
 system resource is to be named _demo_, then the passthru resource will be named
 _demoRes_. This will be the default resource served by the resource server. This
 can be done with a set of commands like the following.
 
 ```bash
-iadmin mkresc demoRes passthru
-iadmin addchildtoresc demoRes demo
+prompt> iadmin mkresc demoRes passthru
+prompt> iadmin addchildtoresc demoRes demo
 ```
 
 Finally, create a rodsadmin user for the resource server to use when connecting
@@ -157,9 +157,9 @@ to other servers in the grid as a client. If the chosen user name is
 password `SECRET_PASSWORD`.
 
 ```bash
-iadmin mkuser demo-admin rodsadmin
-iadmin moduser demo-admin password SECRET_PASSWORD
-iadmin atg rodsadmin demo-admin
+prompt> iadmin mkuser demo-admin rodsadmin
+prompt> iadmin moduser demo-admin password SECRET_PASSWORD
+prompt> iadmin atg rodsadmin demo-admin
 ```
 
 ### Generating the Docker Source Files
@@ -189,12 +189,12 @@ Environment Variable      | Required | Default       | Description
 
 Here's an example.
 
-```
+```bash
 prompt> cat build.env
 CYVERSE_DS_STORAGE_RES=demo
 CYVERSE_DS_RES_SERVER=rs.domain.net
 
-prompt> prep-rs-docker-src build.env project
+prompt> build-cyverse-rs build.env project
 
 prompt> ls project
 docker-compose.yml  Dockerfile
@@ -216,7 +216,7 @@ Environment Variable           | Description
 
 Here's an example.
 
-```
+```bash
 prompt> ls
 docker-compose.yml  Dockerfile  cyverse-secrets.env
 
