@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # Usage:
 #  build
@@ -7,12 +7,15 @@
 # for CyVerse Data Store resource server images. Each build is tagged with the
 # number ISO 8601 style build time.
 
-readonly BaseDir=$(dirname $(readlink --canonicalize "$0"))
+readonly ExecName=$(readlink --canonicalize "$0")
+readonly BaseDir=$(dirname "$ExecName")
 
 
 main()
 {
-  local tag=$(date --utc '+%Y-%m-%dT%H-%M-%S')
+  local tag
+  tag=$(date --utc '+%Y-%m-%dT%H-%M-%S')
+
   "$BaseDir"/irods-netcdf-build/build centos7
   "$BaseDir"/irods-setavu-plugin/build centos7
   docker build --tag cyverse/ds-res-base-onbuild "$BaseDir"
@@ -21,5 +24,4 @@ main()
 
 
 set -e
-
 main
