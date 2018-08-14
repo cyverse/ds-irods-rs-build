@@ -241,5 +241,5 @@ prompt> docker-compose up --build -d
 This repository has two subtrees. The master branch of the
 https://github.com/cyverse/irods-netcdf-build is attached to the directory
 `base/irods-netcdf-build`. The master branch of the
-https://github.com/iPlantCollaborativeOpenSource/irods-setavu-plugin is attached
-to the directory `base/irods-setavu-plugin`.
+https://github.com/cyverse/irods-setavu-plugin is attached to the directory
+`base/irods-setavu-plugin`.
