@@ -4,4 +4,4 @@
 
 sernec_OWNERS = list("sernec")
 sernec_WRITERS = list("brownh")
-sernec_READERS = list("bjoyce3", "michael_denslow", "narro")
+sernec_READERS = list("bjoyce3", "michael_denslow")

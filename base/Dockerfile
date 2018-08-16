@@ -8,8 +8,8 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7 && \
     yum --assumeyes install \
       jq sysvinit-tools uuidd which \
-      ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-resource-4.1.10-centos7-x86_64.rpm \
-      ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-runtime-4.1.10-centos7-x86_64.rpm && \
+      https://files.renci.org/pub/irods/releases/4.1.10/centos7/irods-resource-4.1.10-centos7-x86_64.rpm \
+      https://files.renci.org/pub/irods/releases/4.1.10/centos7/irods-runtime-4.1.10-centos7-x86_64.rpm && \
     adduser --system --comment 'iRODS Administrator' --home-dir /var/lib/irods --shell /bin/bash \
             irods && \
     yum --assumeyes install \
@@ -20,13 +20,37 @@ RUN rpmkeys --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     rm --force --recursive /tmp/* /var/cache/yum && \
     mkdir --parents /var/lib/irods/.irods
 
-ADD https://raw.githubusercontent.com/cyverse/irods-cmd-scripts/master/generateuuid.sh \
-    /var/lib/irods/iRODS/server/bin/cmd
+ADD https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/calliope-ingest \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/de-archive-data \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/de-create-collection \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/delete-scheduled-rule \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/generateuuid \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/sanimal-ingest \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/cmd-common/set-uuid \
+    /var/lib/irods/iRODS/server/bin/cmd/
+
+ADD https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/aegis.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/bisque.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/calliope.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/coge.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/de.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-amqp.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-custom.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-housekeeping.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-json.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-logic.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-repl.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-services.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/ipc-uuid.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/pire.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/sanimal.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/sciapps.re \
+    https://raw.githubusercontent.com/cyverse/ds-playbooks/master/irods/files/rule-bases/sernec.re \
+    /etc/irods/
 
 COPY irods-setavu-plugin/libraries/centos7/libmsiSetAVU.so /var/lib/irods/plugins/microservices
-COPY config/hosts_config.json config/server_config.json /etc/irods/
+COPY config/hosts_config.json config/server_config.json env-rules/* /etc/irods/
 COPY config/irods_environment.json /var/lib/irods/.irods
-COPY rules/* /etc/irods/
 COPY scripts/entrypoint.sh /entrypoint
 COPY scripts/on-build-instantiate.sh /on-build-instantiate
 
