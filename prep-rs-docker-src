@@ -88,6 +88,11 @@ main()
   if [ "$#" -ge 2 ]
   then
     outDir="$2"
+
+    if [ ! -e "$outDir" ]
+    then
+      mkdir --parents "$outDir"
+    fi
   fi
 
   build "$envFile" "$outDir"
@@ -99,6 +104,7 @@ build()
   local envFile="$1"
   local outDir="$2"
 
+  # shellcheck disable=SC1090
   . "$envFile"
   check_env CYVERSE_DS_STORAGE_RES
   check_env CYVERSE_DS_RES_SERVER
@@ -191,5 +197,4 @@ EOF
 
 
 set -e
-
 main "$@"
