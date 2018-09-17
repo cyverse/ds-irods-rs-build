@@ -194,7 +194,7 @@ prompt> cat build.env
 CYVERSE_DS_STORAGE_RES=demo
 CYVERSE_DS_RES_SERVER=rs.domain.net
 
-prompt> build-cyverse-rs build.env project
+prompt> prep-rs-docker-src build.env project
 
 prompt> ls project
 docker-compose.yml  Dockerfile
