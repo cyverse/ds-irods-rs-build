@@ -55,6 +55,7 @@ COPY scripts/entrypoint.sh /entrypoint
 COPY scripts/on-build-instantiate.sh /on-build-instantiate
 
 RUN chown --recursive irods:irods /entrypoint /var/lib/irods && \
+    chmod --recursive ug+r /etc/irods && \
     chmod ug+w /var/lib/irods/.irods /var/lib/irods/iRODS/server/log && \
     chmod ug+x /entrypoint && \
     chmod u+x /on-build-instantiate
