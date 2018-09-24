@@ -46,7 +46,7 @@ main()
      .irods_user_name        |= \"$CYVERSE_DS_CLERVER_USER\"" \
     /var/lib/irods/.irods/irods_environment.json
 
-  printf "\nipc_DEFAULT_RESC = '%s'\n" "$CYVERSE_DS_DEFAULT_RES" >> /etc/irods/ipc-env.re
+  sed --in-place "s/__CYVERSE_DS_DEFAULT_RES__/$CYVERSE_DS_DEFAULT_RES/" /etc/irods/ipc-env.re
 
   mk_start_program > /start-irods
   chmod ug+x /start-irods
