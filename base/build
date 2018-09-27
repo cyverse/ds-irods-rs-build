@@ -3,7 +3,7 @@
 # Usage:
 #  build
 #
-# This program builds the ds-res-base-onbuild image that forms the base image
+# This program builds the ds-irods-rs-onbuild image that forms the base image
 # for CyVerse Data Store resource server images. Each build is tagged with the
 # number ISO 8601 style build time.
 
@@ -18,8 +18,8 @@ main()
 
   "$BaseDir"/irods-netcdf-build/build centos7
   "$BaseDir"/irods-setavu-plugin/build centos7
-  docker build --tag cyverse/ds-res-base-onbuild "$BaseDir"
-  docker tag cyverse/ds-res-base-onbuild:latest cyverse/ds-res-base-onbuild:"$tag"
+  docker build --tag cyverse/ds-irods-rs-onbuild "$BaseDir"
+  docker tag cyverse/ds-irods-rs-onbuild:latest cyverse/ds-irods-rs-onbuild:"$tag"
 }
 
 
