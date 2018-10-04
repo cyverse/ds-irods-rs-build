@@ -109,16 +109,13 @@ build()
   check_env CYVERSE_DS_STORAGE_RES
   check_env CYVERSE_DS_RES_SERVER
 
-  local containerVault=/irods_vault/"$CYVERSE_DS_STORAGE_RES"
   local defaultRes="$CYVERSE_DS_STORAGE_RES"Res
   local hostVault="${CYVERSE_DS_RES_VAULT:-\$HOME/vault}"
   local hostLog="${CYVERSE_DS_LOG_DIR:-\$HOME/log}"
   local user="${CYVERSE_DS_CLERVER_USER:-ipc_admin}"
 
   printf 'FROM cyverse/ds-irods-rs-onbuild:latest\n' > "$outDir"/Dockerfile
-
-  mk_compose_file "$defaultRes" "$user" "$hostLog" "$hostVault" "$containerVault" \
-    > "$outDir"/docker-compose.yml
+  mk_compose_file "$defaultRes" "$user" "$hostLog" "$hostVault" > "$outDir"/docker-compose.yml
 }
 
 
@@ -153,8 +150,6 @@ check_env()
 #  hostLog         the host directory where teh container will mount
 #                  /var/lib/irods/iRODS/server/log
 #  hostVault       the host directory where the container will mount its vault
-#  containerVault  the base directory within the container where the files will
-#                  be stored
 #
 mk_compose_file()
 {
@@ -162,7 +157,6 @@ mk_compose_file()
   local user="$2"
   local hostLog="$3"
   local hostVault="$4"
-  local containerVault="$5"
 
   cat <<EOF
 ---
@@ -173,7 +167,6 @@ services:
     build:
       args:
         CYVERSE_DS_CLERVER_USER: $user
-        CYVERSE_DS_CONTAINER_VAULT: $containerVault
         CYVERSE_DS_DEFAULT_RES: $defaultRes
         CYVERSE_DS_HOST_UID: $CYVERSE_DS_HOST_UID
         CYVERSE_DS_RES_SERVER: $CYVERSE_DS_RES_SERVER
@@ -190,7 +183,7 @@ services:
     tmpfs: /var/lib/irods/iRODS/server/log/proc
     tty: true
     volumes:
-      - $hostVault:$containerVault
+      - $hostVault:/irods_vault/$CYVERSE_DS_STORAGE_RES
       - $hostLog:/var/lib/irods/iRODS/server/log
 EOF
 }
