@@ -1,4 +1,4 @@
-# docker-cyverse-irods-rs
+# ds-irods-rs-build
 
 A program for creating an iRODS resource server that runs in a Docker container
 and is configured for the CyVerse Data Store.
