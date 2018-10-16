@@ -1,26 +1,10 @@
 # docker-cyverse-irods-rs
 
-An iRODS resource server that runs in a Docker container. The container is
-configured for the CyVerse Data Store.
+A program for creating an iRODS resource server that runs in a Docker container
+and is configured for the CyVerse Data Store.
+
 
 ## Design
-
-The containerized resource server is designed so that it is as simple as
-possible for a trusted third party organization to support given the following
-constraints.
-
-* Other than the resource server being off line, down time at the third party
-  site should not impact the CyVerse Data Store.
-* Maintenance of the resource server can be done by CyVerse without requiring
-  full root access to the hosting server.
-* Failed upgrades can be easily reverted.
-* Sensitive information is stored in a separate artifact from the rest of the
-  deployment logic.
-
-The container logic consists of two image layers. The base image holds all of
-the logic common to all Data Store resource servers. The top level image holds
-all of the logic that is specific to the resource server inside the container.
-The base image will be hosted on Docker Hub in the cyverse repository.
 
 All of the sensitive information that would normally be set in the iRODS
 configuration files as well as the clerver password have been removed. They must
@@ -154,9 +138,9 @@ Environment Variable      | Required | Default       | Description
 `CYVERSE_DS_CLERVER_USER` | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
 `CYVERSE_DS_HOST_UID`     | no       |               | the UID of the hosting server to run iRODS as instead of the default user defined in the container
 `CYVERSE_DS_LOG_DIR`      | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
-`CYVERSE_DS_STORAGE_RES`  | yes      |               | the name of the unix file system resource that will be served
 `CYVERSE_DS_RES_SERVER`   | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
 `CYVERSE_DS_RES_VAULT`    | no       | `$HOME`/vault | the host directory where the container will mount the vault, for the default, `$HOME` is evaluated at container start time
+`CYVERSE_DS_STORAGE_RES`  | yes      |               | the name of the unix file system resource that will be served
 
 Here's an example.
 
