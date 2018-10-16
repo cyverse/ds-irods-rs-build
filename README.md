@@ -14,11 +14,11 @@ time.
 docker-compose was chosen as the tool to manage the building of the top level
 image as well as starting and stopping its container instance.
 
-The program `prep-rs-docker-src` was created to simplify the generation of the
-top level image's `Dockerfile` file and the `docker-compose.yml` file. As its
-input, it takes an environment file that should provide the resource server
-specific configuration values. In most cases, the generated files can be used
-without modification.
+The program `prep-docker` was created to simplify the generation of the top
+level image's `Dockerfile` file and the `docker-compose.yml` file. As its input,
+it takes an environment file that should provide the resource server specific
+configuration values. In most cases, the generated files can be used without
+modification.
 
 There are three deployment artifacts: `Dockerfile`, `docker-compose.yml`, and
 `cyverse-secrets.env`. Once the correct configuration values have been defined,
@@ -119,19 +119,18 @@ prompt> iadmin atg rodsadmin demo-admin
 
 ### Generating the Docker Source Files
 
-The `prep-rs-docker-src` program can be used to create a `Dockerfile` file and a
+The `prep-docker` program can be used to create a `Dockerfile` file and a
 `docker-compose.yml` file that can be use to build and run a container hosting
 an iRODS resource server that is configured to serve a given resource within the
 CyVerse Data Store.
 
-As its first command line argument, `prep-rs-docker-src` expects the name of a
-file defining a set of expected environment variables. It also accepts an
-optional second argument specifying the directory where created files will be
-written. If this isn't provided, the files will be written to the current
-working directory.
+As its first command line argument, `prep-docker` expects the name of a file
+defining a set of expected environment variables. It also accepts an optional
+second argument specifying the directory where created files will be written. If
+this isn't provided, the files will be written to the current working directory.
 
-The `prep-rs-docker-src` expects several environment variables to be defined in
-an environment file when it is executed.
+The `prep-docker` expects several environment variables to be defined in an
+environment file when it is executed.
 
 Environment Variable      | Required | Default       | Description
 ------------------------- | -------- | ------------- | -----------
@@ -149,7 +148,7 @@ prompt> cat build.env
 CYVERSE_DS_STORAGE_RES=demo
 CYVERSE_DS_RES_SERVER=rs.domain.net
 
-prompt> prep-rs-docker-src build.env project
+prompt> prep-docker build.env project
 
 prompt> ls project
 docker-compose.yml  Dockerfile

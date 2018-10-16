@@ -5,10 +5,10 @@ show_help()
 {
   cat <<'EOF'
 
-prep-rs-docker-src
+prep-docker
 
 Usage:
- prep-rs-docker-src [options] <env-file> <out-dir>
+ prep-docker [options] <env-file> <out-dir>
 
 Creates a Dockerfile file and a docker-compose.yml file that can be used to
 build and run a container hosting an iRODS resource server configured to be
@@ -46,9 +46,8 @@ EOF
 
 main()
 {
-  local opts=
-
-  if ! opts=$(getopt --name prep-rs-docker-src --options h --longoptions help -- "$@")
+  local opts
+  if ! opts=$(getopt --name prep-docker --options h --longoptions help -- "$@")
   then
     show_help >&2
     return 1
