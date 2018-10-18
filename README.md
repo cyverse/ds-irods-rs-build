@@ -27,7 +27,7 @@ business logic will be made to the base image. This means that only the
 following commands need to be executed to upgrade the resource server.
 
 ```bash
-prompt> docker-compose build
+prompt> docker-compose build --pull
 prompt> docker-compose up -d
 ```
 
@@ -187,5 +187,5 @@ CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
 CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
 CYVERSE_DS_ZONE_KEY=SECRET_zone_key
 
-prompt> docker-compose up --build -d
+prompt> docker-compose up --build --detach
 ```
