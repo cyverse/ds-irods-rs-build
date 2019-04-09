@@ -132,21 +132,21 @@ this isn't provided, the files will be written to the current working directory.
 The `prep-docker` expects several environment variables to be defined in an
 environment file when it is executed.
 
-Environment Variable      | Required | Default       | Description
-------------------------- | -------- | ------------- | -----------
-`CYVERSE_DS_CLERVER_USER` | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
-`CYVERSE_DS_HOST_UID`     | no       |               | the UID of the hosting server to run iRODS as instead of the default user defined in the container
-`CYVERSE_DS_LOG_DIR`      | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
-`CYVERSE_DS_RES_SERVER`   | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
-`CYVERSE_DS_RES_VAULT`    | no       | `$HOME`/vault | the host directory where the container will mount the vault, for the default, `$HOME` is evaluated at container start time
-`CYVERSE_DS_STORAGE_RES`  | yes      |               | the name of the unix file system resource that will be served
+Environment Variable | Required | Default       | Description
+-------------------- | -------- | ------------- | -----------
+`IRODS_CLERVER_USER` | no       | ipc_admin     | the name of the rodsadmin user representing the resource server within the zone
+`IRODS_HOST_UID`     | no       |               | the UID of the hosting server to run iRODS as instead of the default user defined in the container
+`IRODS_LOG_DIR`      | no       | `$HOME`/log   | the host directory where the container will mount the iRODS log directory (`/var/lib/irods/iRODS/server/log`), `$HOME` is evaluated at container start time
+`IRODS_RES_SERVER`   | yes      |               | the FQDN or address used by the rest of the grid to communicate with this server
+`IRODS_RES_VAULT`    | no       | `$HOME`/vault | the host directory where the container will mount the vault, for the default, `$HOME` is evaluated at container start time
+`IRODS_STORAGE_RES`  | yes      |               | the name of the unix file system resource that will be served
 
 Here's an example.
 
 ```bash
 prompt> cat build.env
-CYVERSE_DS_STORAGE_RES=demo
-CYVERSE_DS_RES_SERVER=rs.domain.net
+IRODS_STORAGE_RES=demo
+IRODS_RES_SERVER=rs.domain.net
 
 prompt> prep-docker build.env project
 
@@ -161,12 +161,12 @@ docker-compose is used to run the iRODS resource server. The
 the same directory. It should have the following environment variables defined
 in it.
 
-Environment Variable           | Description
------------------------------- | -----------
-`CYVERSE_DS_CLERVER_PASSWORD`  | the password used to authenticate `CYVERSE_DS_CLERVER_USER`
-`CYVERSE_DS_CONTROL_PLANE_KEY` | the encryption key required for communicating over the relevant iRODS grid control plane
-`CYVERSE_DS_NEGOTIATION_KEY`   | the encryption key shared by the iplant zone for advanced negotiation during client connections
-`CYVERSE_DS_ZONE_KEY`          | the shared secret used during server-to-server communication
+Environment Variable      | Description
+------------------------- | -----------
+`IRODS_CLERVER_PASSWORD`  | the password used to authenticate `IRODS_CLERVER_USER`
+`IRODS_CONTROL_PLANE_KEY` | the encryption key required for communicating over the relevant iRODS grid control plane
+`IRODS_NEGOTIATION_KEY`   | the encryption key shared by the iplant zone for advanced negotiation during client connections
+`IRODS_ZONE_KEY`          | the shared secret used during server-to-server communication
 
 Here's an example.
 
@@ -182,10 +182,10 @@ prompt> cat cyverse-secrets.env
 # ACCESS TO THE CYVERSE DATA STORE. PLEASE KEEP THIS FILE IN A SECURE PLACE.
 #
 ###
-CYVERSE_DS_CLERVER_PASSWORD=SECRET_PASSWORD
-CYVERSE_DS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
-CYVERSE_DS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
-CYVERSE_DS_ZONE_KEY=SECRET_zone_key
+IRODS_CLERVER_PASSWORD=SECRET_PASSWORD
+IRODS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
+IRODS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
+IRODS_ZONE_KEY=SECRET_zone_key
 
-prompt> docker-compose up --build --detach
+prompt> docker-compose up -d --build
 ```
