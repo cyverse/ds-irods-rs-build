@@ -181,6 +181,9 @@ services:
     volumes:
       - $hostVault:/irods_vault/$IRODS_STORAGE_RES
       - $hostLog:/var/lib/irods/iRODS/server/log
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
 EOF
 }
 
