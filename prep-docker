@@ -23,19 +23,19 @@ Options:
  -h, --help  show help and exit
 
 Environment Variables:
- IRODS_CLERVER_USER  (optional) the name of the rodsadmin user representing the 
+ IRODS_CLERVER_USER  (optional) the name of the rodsadmin user representing the
                      resource server within the zone: default 'ipc_admin'
- IRODS_HOST_UID      (optional) the UID of the hosting server to run iRODS as 
+ IRODS_HOST_UID      (optional) the UID of the hosting server to run iRODS as
                      instead of the default user defined in the container
- IRODS_LOG_DIR       (optional) the absolute path on the server hosting the 
-                     container where iRODS will write its logs: default 
-                     '<home>/log' where <home> is the home directory of the user 
+ IRODS_LOG_DIR       (optional) the absolute path on the server hosting the
+                     container where iRODS will write its logs: default
+                     '<home>/log' where <home> is the home directory of the user
                      starting the docker container
- IRODS_RES_SERVER    the FQDN or address used by the IES and other resource 
+ IRODS_RES_SERVER    the FQDN or address used by the IES and other resource
                      servers to communicate with this one
- IRODS_RES_VAULT     (optional) the host directory where the container will 
-                     mount the vault: default '<home>/vault', where <home> is 
-                     the home directory of the user starting the docker 
+ IRODS_RES_VAULT     (optional) the host directory where the container will
+                     mount the vault: default '<home>/vault', where <home> is
+                     the home directory of the user starting the docker
                      container
  IRODS_STORAGE_RES   the name of the storage resource that will be served
 EOF
@@ -140,7 +140,7 @@ check_env()
 # Generate a script for starting a container from the newly build image.
 #
 # Parameters:
-#  defaultRes  the name of the coordinating resource the server will use by 
+#  defaultRes  the name of the coordinating resource the server will use by
 #              default
 #  user        the name of the rodsadmin user the server will authenticate as
 #  hostLog     the host directory where teh container will mount
@@ -176,7 +176,7 @@ services:
       - "20000-20009:20000-20009/tcp"
       - "20000-20009:20000-20009/udp"
     restart: on-failure
-    tmpfs: /var/lib/irods/iRODS/server/log/proc
+    tmpfs: /var/lib/irods/iRODS/server/log/proc:uid=$IRODS_HOST_UID
     tty: true
     volumes:
       - $hostVault:/irods_vault/$IRODS_STORAGE_RES
