@@ -3,7 +3,6 @@
 A program for creating an iRODS resource server that runs in a Docker container
 and is configured for the CyVerse Data Store.
 
-
 ## Design
 
 All of the sensitive information that would normally be set in the iRODS
@@ -35,7 +34,6 @@ If for some reason a base image upgrade doesn't work, the resource server can be
 reverted to the last good base image by modifying the Dockerfile to use the tag
 of the good image. Used the commands above to redeploy the reverted resource
 server.
-
 
 ## Setting up the Resource Server
 
