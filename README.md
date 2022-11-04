@@ -9,7 +9,7 @@ All of the sensitive information that would normally be set in the iRODS configu
 as the clerver password have been removed. They must be provided in a file named
 `cyverse-secrets.env` that will be loaded at run time.
 
-docker-compose was chosen as the tool to manage the building of the top level image as well as
+Docker Compose was chosen as the tool to manage the building of the top level image as well as
 starting and stopping its container instance.
 
 The program `prep-docker` was created to simplify the generation of the top level image's
@@ -23,8 +23,8 @@ modified. All changes to Data Store business logic will be made to the base imag
 only the following commands need to be executed to upgrade the resource server.
 
 ```console
-prompt> docker-compose build --pull
-prompt> docker-compose up -d
+prompt> docker compose build --pull
+prompt> docker compose up -d
 ```
 
 If for some reason a base image upgrade doesn't work, the resource server can be reverted to the
@@ -38,8 +38,8 @@ the CyVerse Data Store.
 
 ### Host Machine
 
-The server hosting the containerized resource server needs to have docker-compose version 1.8 or new
-installed.
+The server hosting the containerized resource server needs to have the system package
+`docker-compose-plugin` installed.
 
 There needs to be a user on the host machine that the container will use to run the iRODS resource
 server.
@@ -141,7 +141,7 @@ docker-compose.yml  Dockerfile
 
 ### Running the Resource Server
 
-docker-compose is used to run the iRODS resource server. The `docker-compose.yml` file assumes there
+Docker Compose is used to run the iRODS resource server. The `docker-compose.yml` file assumes there
 is a file named `cyverse-secrets.env` in the same directory. It should have the following
 environment variables defined in it.
 
@@ -171,5 +171,5 @@ IRODS_CONTROL_PLANE_KEY=SECRET_____32_byte_ctrl_plane_key
 IRODS_NEGOTIATION_KEY=SECRET____32_byte_negotiation_key
 IRODS_ZONE_KEY=SECRET_zone_key
 
-prompt> docker-compose up -d --build
+prompt> docker compose up -d --build
 ```
