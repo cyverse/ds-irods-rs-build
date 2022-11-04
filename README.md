@@ -87,8 +87,8 @@ example, if the resource is to be named _demo_, then the vault path will be
 `/irods_vault/demo`. If the hosting server's public name is _rs.domain.net_,
 then defining the resource can be done with commands like the following.
 
-```bash
-prompt> iadmin mkresc demo 'unix file system' rs.domain.net:/irods_vault/demo
+```console
+prompt> iadmin mkresc demo unixfilesystem rs.domain.net:/irods_vault/demo
 prompt> iadmin modresc demo status down
 ```
 
@@ -99,7 +99,7 @@ system resource is to be named _demo_, then the passthru resource will be named
 _demoRes_. This will be the default resource served by the resource server. This
 can be done with a set of commands like the following.
 
-```bash
+```console
 prompt> iadmin mkresc demoRes passthru
 prompt> iadmin addchildtoresc demoRes demo
 ```
@@ -109,7 +109,7 @@ to other servers in the grid as a client. If the chosen user name is
 `demo-admin`, the following commands can be used to create the user with the
 password `SECRET_PASSWORD`.
 
-```bash
+```console
 prompt> iadmin mkuser demo-admin rodsadmin
 prompt> iadmin moduser demo-admin password SECRET_PASSWORD
 prompt> iadmin atg rodsadmin demo-admin
@@ -141,7 +141,7 @@ Environment Variable | Required | Default       | Description
 
 Here's an example.
 
-```bash
+```console
 prompt> cat build.env
 IRODS_STORAGE_RES=demo
 IRODS_RES_SERVER=rs.domain.net
@@ -168,7 +168,7 @@ Environment Variable      | Description
 
 Here's an example.
 
-```bash
+```console
 prompt> ls
 docker-compose.yml  Dockerfile  cyverse-secrets.env
 
