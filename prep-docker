@@ -144,7 +144,7 @@ check_env()
 #              default
 #  user        the name of the rodsadmin user the server will authenticate as
 #  hostLog     the host directory where teh container will mount
-#              /var/lib/irods/iRODS/server/log
+#              /var/lib/irods/iRODS/log
 #  hostVault   the host directory where the container will mount its vault
 #
 mk_compose_file()
@@ -176,11 +176,11 @@ services:
       - "20000-20009:20000-20009/tcp"
       - "20000-20009:20000-20009/udp"
     restart: on-failure
-    tmpfs: /var/lib/irods/iRODS/server/log/proc:uid=$IRODS_HOST_UID
+    tmpfs: /var/lib/irods/iRODS/log/proc:uid=$IRODS_HOST_UID
     tty: true
     volumes:
       - $hostVault:/irods_vault/$IRODS_STORAGE_RES
-      - $hostLog:/var/lib/irods/iRODS/server/log
+      - $hostLog:/var/lib/irods/iRODS/log
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
