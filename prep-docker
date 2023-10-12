@@ -173,6 +173,8 @@ services:
       - "20000-20009:20000-20009/tcp"
       - "20000-20009:20000-20009/udp"
     restart: on-failure
+    sysctls:
+      - net.ipv4.tcp_keepalive_time=120
     tmpfs: /var/lib/irods/log/proc:uid=$IRODS_HOST_UID
     tty: true
     volumes:
