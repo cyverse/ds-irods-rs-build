@@ -153,7 +153,7 @@ mk_compose_file()
 
   cat <<EOF
 ---
-version: '2'
+version: '3'
 
 services:
   cyverse-rs:
