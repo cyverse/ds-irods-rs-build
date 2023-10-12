@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 show_help()
 {
   cat <<'EOF'
@@ -41,9 +40,7 @@ Environment Variables:
 EOF
 }
 
-
 set -o errexit -o nounset -o pipefail
-
 
 main()
 {
@@ -98,7 +95,6 @@ main()
   build "$envFile" "$outDir"
 }
 
-
 build()
 {
   local envFile="$1"
@@ -118,7 +114,6 @@ build()
   mk_compose_file "$defaultRes" "$user" "$hostLog" "$hostVault" > "$outDir"/docker-compose.yml
 }
 
-
 #
 # Checks for the existence of an environment variable. If the variable doesn't
 # exist, it writes a message to standard error and returns 1.
@@ -137,7 +132,6 @@ check_env()
     return 1
   fi
 }
-
 
 #
 # Generate a script for starting a container from the newly build image.
@@ -186,9 +180,7 @@ services:
       - $hostLog:/var/lib/irods/log
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-
 EOF
 }
-
 
 main "$@"
