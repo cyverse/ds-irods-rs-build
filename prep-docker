@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-show_help()
-{
+show_help() {
   cat <<'EOF'
 
 prep-docker
@@ -34,7 +33,7 @@ Environment Variables:
                      servers to communicate with this one
  IRODS_RES_VAULT     (optional) the host directory where the container will
                      mount the vault: default '<home>/vault', where <home> is
-                     the home directory of the user starting the docker
+                     the home directory of the user starting the dock
                      container
  IRODS_STORAGE_RES   the name of the storage resource that will be served
 EOF
@@ -42,8 +41,7 @@ EOF
 
 set -o errexit -o nounset -o pipefail
 
-main()
-{
+main() {
   local opts
   if ! opts=$(getopt --name prep-docker --options h --longoptions help -- "$@")
   then
@@ -95,8 +93,7 @@ main()
   build "$envFile" "$outDir"
 }
 
-build()
-{
+build() {
   local envFile="$1"
   local outDir="$2"
 
@@ -121,8 +118,7 @@ build()
 # Parameter:
 #  var  the environment variable to check
 #
-check_env()
-{
+check_env() {
   local var="$1"
 
   if [ -z "${!var}" ]
@@ -144,8 +140,7 @@ check_env()
 #              /var/lib/irods/log
 #  hostVault   the host directory where the container will mount its vault
 #
-mk_compose_file()
-{
+mk_compose_file() {
   local defaultRes="$1"
   local user="$2"
   local hostLog="$3"
