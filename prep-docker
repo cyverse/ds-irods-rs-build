@@ -148,8 +148,6 @@ mk_compose_file() {
 
   cat <<EOF
 ---
-version: '3'
-
 services:
   cyverse-rs:
     build:
